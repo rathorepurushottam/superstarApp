@@ -1,0 +1,9 @@
+export const splash = require('../../assets/images/splash.png');
+export const backgroundImg = require('../../assets/images/backgroundImg.png');
+export const backgroundIcon = require('../../assets/images/backgroundIcon.png');
+export const tick = require('../../assets/images/tick.png');
+export const eye_open = require('../../assets/images/eye_open.png');
+export const eye_close = require('../../assets/images/eye_close.png');
+export const timerIcon = require('../../assets/images/timerIcon.png');
+export const successfullIcon = require('../../assets/images/successfullIcon.png');
+export const closeIcon = require('../../assets/images/closeIcon.png');
