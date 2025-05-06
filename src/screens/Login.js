@@ -18,6 +18,8 @@ import LoginOTP from "../common/LoginOTP";
 import ForgotPassword from "../common/ForgotPassword";
 import ResetPassword from "../common/ResetPassword";
 import CustomModal from "../common/CustomModal";
+import NavigationService from "../navigation/NavigationService";
+import { BOTTOM_NAVIGATION_STACK, HOME_SCREEN_MAIN } from "../navigation/routes";
 
 
 const Login = () => {
@@ -117,7 +119,9 @@ const Login = () => {
         refRBSheetOTP.current.close();
         if (isForgot) {
           refRBSheetForgot?.current?.close();
-        };
+        } else {
+          NavigationService.navigate(BOTTOM_NAVIGATION_STACK);
+        }
       };
 
   return (

@@ -1,18 +1,12 @@
 import React from 'react';
-import {
-  Text,
-  View,
-} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import AuthLoading from './screens/AuthLoading';
-import Login from './screens/Login';
+import Navigator from './navigation/Navigator';
 
 
 function App() {
   return (
     <SafeAreaProvider>
-    {/* <AuthLoading /> */}
-    <Login />
+    <Navigator />
    </SafeAreaProvider>
   );
 }

@@ -33,6 +33,8 @@ import {
   startOtpListener,
 } from "react-native-otp-verify";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import NavigationService from "../navigation/NavigationService";
+import { HOME_SCREEN_MAIN } from "../navigation/routes";
 
 const LoginOTP = ({
   otp,
@@ -151,6 +153,7 @@ const LoginOTP = ({
         otp: otp,
         refCode: referCode,
       };
+      NavigationService.navigate(HOME_SCREEN_MAIN);
     //   {
     //     isChange
     //       ? dispatch(
