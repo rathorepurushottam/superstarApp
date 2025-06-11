@@ -8,17 +8,12 @@ import { splash } from '../helper/images';
 
 import { Screen } from '../theme/dimens';
 import { AUTHSTACK, BOTTOM_NAVIGATION_STACK } from '../navigation/routes';
-// import { AUTHSTACK } from '../navigation/routes';
-// import { SpinnerSecond } from '../common/SnipperSecond';
 
 const AuthLoading = () => {
-    //   const dispatch = useDispatch();
-    //   const loading = useSelector((state) => {
-    //     return state.auth.isLoading;
-    // });
     useEffect(() => {
         setTimeout(() => {
-           NavigationService.navigate(AUTHSTACK);
+        //    NavigationService.navigate(AUTHSTACK);
+           NavigationService.navigate(BOTTOM_NAVIGATION_STACK);
         }, 3000);
     }, []);
 

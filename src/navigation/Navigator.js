@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import React from "react";
 import { Platform, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -9,7 +9,9 @@ import {
   AUTH_LOADING_SCREEN,
   AUTHSTACK,
   BOTTOM_NAVIGATION_STACK,
+  CREATE_POST_SCREEEN,
   HOME_SCREEN_MAIN,
+  LEADERBOARD_SCREEN,
   LOGIN,
   PROFILE_SCREEN,
   WITHDRAW_SCREEN,
@@ -17,7 +19,7 @@ import {
 import AuthLoading from "../screens/AuthLoading";
 import Login from "../screens/Login";
 import Home from "../screens/Home";
-import { colors, NewColor } from "../theme/color";
+import { colors } from "../theme/color";
 import { contestIcon, feedIcon, homeIcon, profileIcon, WalletIcon } from "../helper/images";
 import { AppText, GRY, POPPINS_SEMI_BOLD, RED, TEN } from "../common/AppText";
 import FastImage from "react-native-fast-image";
@@ -27,6 +29,8 @@ import AddCash from "../screens/AddCash";
 import Withdraw from "../screens/Withdraw";
 import Profile from "../screens/Profile";
 import Contest from "../screens/Contest";
+import CreatePost from "../screens/CreatePost";
+import Leaderboard from "../screens/Leaderboard";
 
 const Stack = createNativeStackNavigator();
 
@@ -75,6 +79,18 @@ const RootStackScreen = () => (
       component={Withdraw}
       options={{ headerShown: false }}
     />
+     <Stack.Screen
+      name={CREATE_POST_SCREEEN}
+      component={CreatePost}
+      options={{ headerShown: false }}
+    />
+     <Stack.Screen
+      name={LEADERBOARD_SCREEN}
+      component={Leaderboard}
+      options={{ headerShown: false }}
+    />
+    
+    
   </Stack.Navigator>
 );
 
