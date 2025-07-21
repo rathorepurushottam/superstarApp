@@ -22,11 +22,11 @@ const AppSafeAreaView = ({
       </SafeAreaView>
     </View>
   ) : (
-    <View style={[{flex: 1}, style]}>
+    <View style={[{flex: 1, backgroundColor: "#FEFEFE"}, style]}>
       <StatusBar
         translucent={false}
-        backgroundColor={statusColor ? statusColor : "black"}
-        barStyle={barStyle ? barStyle : "light-content"}
+        backgroundColor={'black'}
+        barStyle={"light-content"}
         hidden={hidden}
       />
       {children}

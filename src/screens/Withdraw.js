@@ -9,8 +9,14 @@ import Checkbox from "../common/checkbox";
 import FastImage from "react-native-fast-image";
 import { bankIcon, upiIcon } from "../helper/images";
 import PrimaryButton from "../common/PrimaryButton";
+import { useSelector } from "react-redux";
 
 const Withdraw = () => {
+  const userWallet = useSelector((state) => {
+    return state.profile.userWallet;
+  });
+  let { deposits, winnings, cashbackRewards, bonusRewards } = userWallet;
+  let totalBalance = deposits + winnings + cashbackRewards + bonusRewards;
   return (
     <AppSafeAreaView>
       <KeyBoardAware>
@@ -41,7 +47,7 @@ const Withdraw = () => {
               weight={POPPINS_BOLD}
               style={{ marginTop: 20 }}
             >
-              ₹ 200
+              ₹ {totalBalance}
             </AppText>
           </View>
           <View style={[styles.balanceView, {marginTop: 10}]}>

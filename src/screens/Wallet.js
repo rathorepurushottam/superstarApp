@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { AppSafeAreaView } from "../common/AppSafeAreaView";
@@ -20,8 +21,22 @@ import { KeyBoardAware } from "../common/KeyBoardAware";
 import { colors } from "../theme/color";
 import NavigationService from "../navigation/NavigationService";
 import { ADD_CASH_SCREEN, WITHDRAW_SCREEN } from "../navigation/routes";
+import { useDispatch, useSelector } from "react-redux";
+import { getCategories, getUserWallet } from "../actions/profileAction";
+
 
 const Wallet = () => {
+  const dispatch = useDispatch();
+  const userWallet = useSelector((state) => {
+    return state.profile.userWallet;
+  });
+  let { deposits, winnings, cashbackRewards, bonusRewards } = userWallet;
+  let totalBalance = deposits + winnings + cashbackRewards + bonusRewards;
+  useEffect(()=> {
+    dispatch(getUserWallet());
+  }, []);
+
+  console.log(userWallet, "userWallet");
   return (
     <AppSafeAreaView>
       <KeyBoardAware>
@@ -44,7 +59,7 @@ const Wallet = () => {
               weight={POPPINS_BOLD}
               style={{ marginTop: 20 }}
             >
-              ₹ 200
+              ₹ {totalBalance}
             </AppText>
           </View>
           <View style={{ marginTop: 30 }}>
@@ -54,7 +69,7 @@ const Wallet = () => {
                   Deposit
                 </AppText>
                 <AppText color={BLACK} type={TWENTY_FOUR} weight={POPPINS_BOLD}>
-                  ₹ 0.00
+                  ₹ {deposits}
                 </AppText>
               </View>
               <TouchableOpacity
@@ -73,7 +88,7 @@ const Wallet = () => {
                   Winning
                 </AppText>
                 <AppText color={BLACK} type={TWENTY_FOUR} weight={POPPINS_BOLD}>
-                  ₹ 0.00
+                  ₹ {winnings}
                 </AppText>
               </View>
               <TouchableOpacity
@@ -92,7 +107,7 @@ const Wallet = () => {
                   Cashback Rewards
                 </AppText>
                 <AppText color={BLACK} type={TWENTY_FOUR} weight={POPPINS_BOLD}>
-                  ₹ 9.00
+                  ₹ {cashbackRewards}
                 </AppText>
                 <View
                   style={{
@@ -119,7 +134,7 @@ const Wallet = () => {
                   Bonus Rewards
                 </AppText>
                 <AppText color={BLACK} type={TWENTY_FOUR} weight={POPPINS_BOLD}>
-                  ₹ 9.00
+                  ₹ {bonusRewards}
                 </AppText>
                 <View
                   style={{

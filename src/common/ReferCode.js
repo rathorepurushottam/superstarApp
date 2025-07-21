@@ -3,26 +3,26 @@ import { StyleSheet, View } from "react-native";
 import PrimaryButton from "./PrimaryButton";
 import { AppText, BLACK, BLUE, POPPINS_MEDIUM, POPPINS_SEMI_BOLD, RED, TWELVE, TWENTY } from "./AppText";
 import InputBox from "./InputBox";
-// import { useDispatch, useSelector } from "react-redux";
-// import { valideReferCode } from "../actions/authActions";
+import { useDispatch, useSelector } from "react-redux";
+import { valideReferCode } from "../actions/authActions";
 // import { SpinnerSecond } from "./SnipperSecond";
 import { universalPaddingHorizontal } from "../theme/dimens";
 import { colors } from "../theme/color";
 
 const ReferCode = ({onCloseRefer, referCode, setReferCode}) => {
-//   const dispatch = useDispatch();
-//   const loading = useSelector((state) => {
-//     return state.auth.isLoading;
-//   });
+  const dispatch = useDispatch();
+  // const loading = useSelector((state) => {
+  //   return state.auth.isLoading;
+  // });
   const [signFocus, setSignFocus] = useState(false);
   const [error, setError] = useState('');
 
 
   const handleReferCode = () => {
-    // let data = {
-    //   refCode:  referCode
-    // };
-    // dispatch(valideReferCode(data, onCloseRefer, setReferCode, setError))
+    let data = {
+      referral_code:  referCode
+    };
+    dispatch(valideReferCode(data, onCloseRefer, setReferCode, setError))
     onCloseRefer();
   }
 

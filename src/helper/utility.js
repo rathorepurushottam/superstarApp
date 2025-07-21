@@ -1,9 +1,23 @@
 import { Share, ToastAndroid } from "react-native";
 import { poppinsBold } from "../theme/typography";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { USER_TOKEN_KEY } from "../libs/constant";
+import { appOperation } from "../appOperation";
 
-// export const BASE_URL = 'https://api.pokertales.com/';
+// export const BASE_URL = 'http://103.110.127.91:3333/';
+export const BASE_URL = 'http://192.168.29.86:3333/';
 
-// export const IMAGE_BASE_URL = 'https://api.pokertales.com/';
+
+export const IMAGE_BASE_URL = 'http://192.168.29.86:3333/public';
+
+export const onAppStart = async (store) => {
+  try {
+    const customerToken = await AsyncStorage.getItem(USER_TOKEN_KEY);
+    appOperation.setCustomerToken(customerToken);
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 export const toastAlert = {
     // showToastSuccess: (message, duration = 2500) => { },
@@ -11,7 +25,7 @@ export const toastAlert = {
       Platform.OS == 'ios' ?
         Toast.show({
           type: 'success',
-          text1: 'PokerTales',
+          text1: 'SuperStar',
           text2: `${message}`,
           text2Style: { fontSize: 12, fontFamily: poppinsBold },
           text1Style: { fontFamily: poppinsBold },
@@ -95,7 +109,7 @@ export const toastAlert = {
     }
   };
 
-  export const shareMessage = code => {
-    let temp = `Join through my referral link, and we’ll both score some awesome rewards! 💰\n\n1. Download the PokerTales app from here: https://pokertales.com/download-apk/${code}\n2. Get ₹25 Bonus Instantly.\n\n Let’s play and have fun!`;
-    return temp;
-  };
+  // export const shareMessage = code => {
+  //   let temp = `Join through my referral link, and we’ll both score some awesome rewards! 💰\n\n1. Download the PokerTales app from here: https://pokertales.com/download-apk/${code}\n2. Get ₹25 Bonus Instantly.\n\n Let’s play and have fun!`;
+  //   return temp;
+  // };

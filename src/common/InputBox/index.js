@@ -1,7 +1,7 @@
 import { View, TextInput, TouchableOpacity } from 'react-native';
 import React from 'react';
 import styles from './styles';
-import { AppText, BLACK, EIGHTEEN, FORTEEN, POPPINS_BOLD, POPPINS_MEDIUM, POPPINS_SEMI_BOLD, SIXTEEN, TWELVE, TWENTY, TWENTY_FIVE } from '../AppText';
+import { AppText, BLACK, EIGHTEEN, FORTEEN, POPPINS_BOLD, POPPINS_MEDIUM, POPPINS_SEMI_BOLD, SIXTEEN, TWELVE, TWENTY, TWENTY_FIVE, WHITE } from '../AppText';
 import FastImage from 'react-native-fast-image';
 import { eye_close, eye_open } from '../../helper/images';
 import { colors } from '../../theme/color';
@@ -71,7 +71,7 @@ const InputBox = ({
                         borderRightWidth: 1,
                         borderRightColor: "#FFFFFF26"
                     }}>
-                        <AppText type={SIXTEEN}>+91</AppText>
+                        <AppText type={SIXTEEN} color={WHITE}>+91</AppText>
                     </View>)}
                     {amount && (<View style={{
                         height: 29 ,

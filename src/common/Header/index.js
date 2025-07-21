@@ -17,15 +17,30 @@ import {
 } from "../AppText";
 import { iconbell, threeIcon, userIcon, WalletIcon } from "../../helper/images";
 import LinearGradient from "react-native-linear-gradient";
+import { useSelector } from "react-redux";
+import NavigationService from "../../navigation/NavigationService";
+import { IMAGE_BASE_URL } from "../../helper/utility";
 
 const Header = () => {
+  const userWallet = useSelector((state) => {
+    return state.profile.userWallet;
+  });
+  const userData = useSelector((state) => {
+    return state.profile.userData;
+  });
+  // let { deposits, winnings, cashbackRewards, bonusRewards } = userWallet;
+  // let totalBalance = deposits + winnings + cashbackRewards + bonusRewards;
   return (
     <View style={styles.topContainer}>
       <View style={{ width: "50%" }}>
         <TouchableOpacity>
           <FastImage
             resizeMode="contain"
-            source={userIcon}
+            source={
+              !userData?.profile_photo
+                ? userIcon
+                : { uri: IMAGE_BASE_URL + userData?.profile_photo }
+            }
             style={styles.personImage}
           />
         </TouchableOpacity>
@@ -37,9 +52,10 @@ const Header = () => {
           justifyContent: "space-between",
           width: "50%",
           alignItems: "center",
+          gap: 10
         }}
       >
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => NavigationService.navigate("Wallet")}>
           <LinearGradient
             colors={["#FFFFFF33", "#FFFFFF26"]}
             start={{ x: 1, y: 0 }}
@@ -62,7 +78,11 @@ const Header = () => {
                   weight={POPPINS_BOLD}
                   color={BLACK}
                 >
-                  ₹ {"150"}
+                  ₹{" "}
+                  {userWallet?.deposits +
+                    userWallet?.winnings +
+                    userWallet?.cashbackRewards +
+                    userWallet?.bonusRewards}
                 </AppText>
               </View>
             </View>
@@ -95,6 +115,7 @@ const styles = StyleSheet.create({
   personImage: {
     height: 40,
     width: 40,
+    borderRadius: 50,
   },
   combineIcon: {
     height: 35,

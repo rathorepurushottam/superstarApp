@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ImageBackground, StyleSheet, TouchableOpacity, View } from "react-native";
 import { AppSafeAreaView } from "../common/AppSafeAreaView";
 import { KeyBoardAware } from "../common/KeyBoardAware";
@@ -20,9 +20,14 @@ import ResetPassword from "../common/ResetPassword";
 import CustomModal from "../common/CustomModal";
 import NavigationService from "../navigation/NavigationService";
 import { BOTTOM_NAVIGATION_STACK, HOME_SCREEN_MAIN } from "../navigation/routes";
+import { userSignup } from "../actions/authActions";
+import { useDispatch, useSelector } from "react-redux";
+import {PermissionsAndroid, Platform} from 'react-native';
+import { SpinnerSecond } from "../common/SpinnerSecond";
 
 
 const Login = () => {
+  const dispatch = useDispatch();
     const refRBSheetLogin = useRef();
     const refRBSheetRefer = useRef();
     const refRBSheetForgot = useRef();
@@ -37,6 +42,7 @@ const Login = () => {
     const [isForgot, setIsForgot] = useState(false);
     const [referCode, setReferCode] = useState("");
     const [isOpen, setIsOpen] = useState(false);
+    const loading = useSelector((state) => state.auth.loading);
 
 
   const handleOpenForgot = () => {
@@ -51,6 +57,30 @@ const Login = () => {
     refRBSheetOTP?.current?.open();
     // setIsLogin(true);
   };
+   useEffect(() => {requestCameraPermission()}, []);
+  const requestCameraPermission = async () => {
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CAMERA,
+          {
+            title: 'Camera Permission',
+            message: 'App needs access to your camera',
+            buttonPositive: 'OK',
+          },
+        );
+  
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          console.log('Camera permission granted');
+        } else {
+          console.log('Camera permission denied');
+        }
+      } catch (err) {
+        console.warn(err);
+      }
+    }
+  };
+  
 
     const handleOTP = () => {
         // if (locationAccess !== 'granted') {
@@ -74,15 +104,15 @@ const Login = () => {
           toastAlert.showToastError("Please click on Promtional SMS.");
           return;
         } 
-        // else {
-        //   let number = parseInt(phoneNumber);
-        //   let data = {
-        //     signId: number,
-        //     type: "loginOtp",
-        //   };
+        else {
+          let number = parseInt(phoneNumber);
+          let data = {
+            mobile_number: number,
+          };
     
-        //   dispatch(userSignup(data, handleOtp));
-        // }
+          dispatch(userSignup(data, handleOtp));
+          setPhoneNumber(number);
+        }
     
         setIsForgot(false);
         setOtp('');
@@ -237,7 +267,7 @@ const Login = () => {
               </AppText>
               <AppText
                   color={GOLDEN}
-                  onPress={() =>  NavigationService.navigate(SUB_MENU_SCREEN, {data: 'Terms & Conditions'})}
+                  // onPress={() =>  NavigationService.navigate(SUB_MENU_SCREEN, {data: 'Terms & Conditions'})}
                   style={{
                     // borderBottomWidth: 1,
                     // borderBottomColor: colors.goldenColor,
@@ -379,6 +409,7 @@ const Login = () => {
         <ResetPassword onCloseResetPass={handleCloseResetPass} signId={phoneNumber} otp={otp} setIsForgot={setIsForgot} setIsOpen={setIsOpen}/>
       </RBSheet>
       <CustomModal isOpen={isOpen} setIsOpen={setIsOpen} desc={'Your password has been successfully changed.'} title={'Success'}/>
+      <SpinnerSecond loading={loading} />
     </AppSafeAreaView>
   );
 };

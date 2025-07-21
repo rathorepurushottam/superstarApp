@@ -32,8 +32,8 @@ import {
   validatePassword,
   validatePhoneNumber,
 } from "../helper/utility";
-// import { useDispatch, useSelector } from "react-redux";
-// import { loginUsingPassword } from "../actions/authActions";
+import { loginUsingPassword } from "../actions/authActions";
+import { useDispatch, useSelector } from "react-redux";
 // import { SpinnerSecond } from "./SnipperSecond";
 // import { setUserData } from "../slices/profileSlice";
 // import { setUserName, setUserPassword } from "../slices/authSlice";
@@ -45,7 +45,7 @@ const LoginWithPassword = ({
   onOpenForgot,
   onCloseLogin,
 }) => {
-//   const dispatch = useDispatch();
+  const dispatch = useDispatch();
 //   const loading = useSelector((state) => {
 //     return state.auth.isLoading;
 //   });
@@ -71,20 +71,20 @@ const LoginWithPassword = ({
   const handleLoginUsingPassword = () => {
     if (!signId) {
       // toastAlert.showToastError("Please enter Email or Mobile Number");
-      setError("Please enter Email or Mobile Number");
+      setError("Please enter UserName");
       return;
     }
-    if (signId.includes("@")) {
-      if (!validateEmail(signId)) {
-        // toastAlert.showToastError("Please Enter Correct Mobile Number");
-        setError("Please Enter Correct Email Id");
-        return;
-      }
-    } else if (!validatePhoneNumber(signId)) {
-      // toastAlert.showToastError("Please Enter Correct Mobile Number");
-      setError("Please Enter Correct Mobile Number");
-      return;
-    }
+    // if (signId.includes("@")) {
+    //   if (!validateEmail(signId)) {
+    //     // toastAlert.showToastError("Please Enter Correct Mobile Number");
+    //     setError("Please Enter Correct Email Id");
+    //     return;
+    //   }
+    // } else if (!validatePhoneNumber(signId)) {
+    //   // toastAlert.showToastError("Please Enter Correct Mobile Number");
+    //   setError("Please Enter Correct Mobile Number");
+    //   return;
+    // }
 
     if (!password) {
       setPassFocus(false);
@@ -93,13 +93,13 @@ const LoginWithPassword = ({
       setError("Please enter password");
       return;
     }
-    if (password?.length < 8) {
-      setPassFocus(false);
-      setValidPass(false);
-      setError('Password should be 8 characters long')
-      // toastAlert.showToastError("Invalid password format.");
-      return;
-    }
+    // if (password?.length < 8) {
+    //   setPassFocus(false);
+    //   setValidPass(false);
+    //   setError('Password should be 8 characters long')
+    //   // toastAlert.showToastError("Invalid password format.");
+    //   return;
+    // }
     // if (isRememberSelected) {
     //   AsyncStorage.setItem("userName", signId);
     //   AsyncStorage.setItem("password", password);
@@ -108,12 +108,12 @@ const LoginWithPassword = ({
     //   AsyncStorage.removeItem("password");
     // }
     // let number = signId.includes("@") ? signId : parseInt(signId);
-    // let data = {
-    //   password: password,
-    //   signId: number,
-    // };
+    let data = {
+      password: password,
+      mobile_number: signId,
+    };
 
-    // dispatch(loginUsingPassword(data, onCloseLogin, setError));
+    dispatch(loginUsingPassword(data, onCloseLogin, setError));
   };
 
   return (
@@ -141,7 +141,7 @@ const LoginWithPassword = ({
         Login via Password
       </AppText>
       <InputBox
-        placeholder={"Email or mobile"}
+        placeholder={"Enter Mobile Number"}
         top
         placeholderTextColor={"#00000066"}
         textInputStyle={{

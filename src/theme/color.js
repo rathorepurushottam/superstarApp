@@ -64,6 +64,7 @@ export const colors = {
     bannerBackColor: "#091831",
     withdrawBlue: "#0F65F8",
     lightGrey: "#032146B2",
+    blackOpacity: "#151515",
   };
   export const NewColor = {
     linerBabyPink: '#803090',

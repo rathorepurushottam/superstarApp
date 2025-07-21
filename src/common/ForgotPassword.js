@@ -17,14 +17,14 @@ import {
   validateEmail,
   validatePhoneNumber,
 } from "../helper/utility";
-// import { forgotPassword, userSignup } from "../actions/authActions";
-// import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 // import { SpinnerSecond } from "./SnipperSecond";
 import { universalPaddingHorizontal } from "../theme/dimens";
 import { colors } from "../theme/color";
+import { userForgotOtp } from "../actions/authActions";
 
 const ForgotPassword = ({ onCloseForgot, setPhoneNumber }) => {
-//   const dispatch = useDispatch();
+  const dispatch = useDispatch();
 //   const loading = useSelector((state) => {
 //     return state.auth.isLoading;
 //   });
@@ -52,13 +52,12 @@ const ForgotPassword = ({ onCloseForgot, setPhoneNumber }) => {
     }
     let number = signId.includes("@") ? signId : parseInt(signId);
     onCloseForgot();
-    // let data = {
-    //   signId: number,
-    //   type: "changePassword",
-    // };
-    // setPhoneNumber(number);
+    let data = {
+      mobile_number: number,
+    };
+    setPhoneNumber(number);
 
-    // dispatch(userSignup(data, onCloseForgot, setError));
+    dispatch(userForgotOtp(data, onCloseForgot, setError));
   };
   return (
     <View styles={styles.mainView}>
@@ -85,7 +84,7 @@ const ForgotPassword = ({ onCloseForgot, setPhoneNumber }) => {
         Forgot Password
       </AppText>
       <InputBox
-        placeholder={"Email or Phone"}
+        placeholder={"Enter mobile No."}
         top
         placeholderTextColor={"#00000066"}
         textInputStyle={{

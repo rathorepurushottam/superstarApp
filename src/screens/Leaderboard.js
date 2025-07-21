@@ -1,11 +1,13 @@
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { AppSafeAreaView } from "../common/AppSafeAreaView";
-import Icon from "react-native-vector-icons/MaterialIcons";
 import FastImage from "react-native-fast-image";
 import {
   backIcon,
+  bronseIcon,
   danceIcon,
+  downIcon,
   firstPrizeIcon,
+  silverWinIcon,
   upIcon,
   user1Icon,
   Win1stIcon,
@@ -25,21 +27,29 @@ import {
   WHITE,
 } from "../common/AppText";
 import { useState } from "react";
+import NavigationService from "../navigation/NavigationService";
 
 const Leaderboard = () => {
   const [activeTab, setActiveTab] = useState("Winning");
   return (
     <AppSafeAreaView>
       <View style={styles.mainView}>
-        <FastImage
-          source={backIcon}
-          resizeMode="contain"
-          style={{ width: 20, height: 20, marginHorizontal: 20, marginTop: 20 }}
-        />
+        <TouchableOpacity onPress={() => NavigationService.goBack()}>
+          <FastImage
+            source={backIcon}
+            resizeMode="contain"
+            style={{
+              width: 20,
+              height: 20,
+              marginHorizontal: 20,
+              marginTop: 20,
+            }}
+          />
+        </TouchableOpacity>
+
         <View style={{ marginHorizontal: 10 }}>
           <View
             style={{
-              //   backgroundColor: "#F8F8F8",
               borderTopLeftRadius: 10,
               borderTopRightRadius: 10,
             }}
@@ -178,7 +188,6 @@ const Leaderboard = () => {
                 backgroundColor: "#D24430",
                 justifyContent: "center",
                 padding: 8,
-                // borderBottomRightRadius: 10,
               }}
             >
               <FastImage
@@ -446,7 +455,7 @@ const Leaderboard = () => {
                   marginTop: 20,
                   flexDirection: "row",
                   alignItems: "center",
-                  justifyContent: "space-between"
+                  justifyContent: "space-between",
                 }}
               >
                 <View
@@ -499,14 +508,14 @@ const Leaderboard = () => {
                   marginTop: 20,
                   flexDirection: "row",
                   alignItems: "center",
-                  justifyContent: "space-between"
+                  justifyContent: "space-between",
                 }}
               >
                 <View
                   style={{ flexDirection: "row", alignItems: "center", gap: 5 }}
                 >
                   <FastImage
-                    source={Win1stIcon}
+                    source={silverWinIcon}
                     resizeMode="contain"
                     style={{ width: 30, height: 30 }}
                   />
@@ -552,14 +561,14 @@ const Leaderboard = () => {
                   marginTop: 20,
                   flexDirection: "row",
                   alignItems: "center",
-                  justifyContent: "space-between"
+                  justifyContent: "space-between",
                 }}
               >
                 <View
                   style={{ flexDirection: "row", alignItems: "center", gap: 5 }}
                 >
                   <FastImage
-                    source={Win1stIcon}
+                    source={bronseIcon}
                     resizeMode="contain"
                     style={{ width: 30, height: 30 }}
                   />
@@ -593,7 +602,7 @@ const Leaderboard = () => {
                     resizeMode="contain"
                     style={{ width: 20, height: 20 }}
                   />
-                  <AppText color={BLACK}>2</AppText>
+                  <AppText color={BLACK}>1</AppText>
                 </View>
 
                 <AppText color={BLACK} weight={POPPINS_SEMI_BOLD}>
@@ -605,17 +614,19 @@ const Leaderboard = () => {
                   marginTop: 20,
                   flexDirection: "row",
                   alignItems: "center",
-                  justifyContent: "space-between"
+                  justifyContent: "space-between",
                 }}
               >
                 <View
                   style={{ flexDirection: "row", alignItems: "center", gap: 5 }}
                 >
-                  <FastImage
-                    source={Win1stIcon}
-                    resizeMode="contain"
-                    style={{ width: 30, height: 30 }}
-                  />
+                  <AppText
+                    color={BLACK}
+                    weight={POPPINS_SEMI_BOLD}
+                    style={{ marginHorizontal: 4 }}
+                  >
+                    # 4
+                  </AppText>
                   <View
                     style={{
                       flexDirection: "row",
@@ -642,7 +653,7 @@ const Leaderboard = () => {
                     </AppText>
                   </View>
                   <FastImage
-                    source={upIcon}
+                    source={downIcon}
                     resizeMode="contain"
                     style={{ width: 20, height: 20 }}
                   />
@@ -658,17 +669,19 @@ const Leaderboard = () => {
                   marginTop: 20,
                   flexDirection: "row",
                   alignItems: "center",
-                  justifyContent: "space-between"
+                  justifyContent: "space-between",
                 }}
               >
                 <View
                   style={{ flexDirection: "row", alignItems: "center", gap: 5 }}
                 >
-                  <FastImage
-                    source={Win1stIcon}
-                    resizeMode="contain"
-                    style={{ width: 30, height: 30 }}
-                  />
+                  <AppText
+                    color={BLACK}
+                    weight={POPPINS_SEMI_BOLD}
+                    style={{ marginHorizontal: 4 }}
+                  >
+                    # 5
+                  </AppText>
                   <View
                     style={{
                       flexDirection: "row",

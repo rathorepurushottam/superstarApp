@@ -35,6 +35,8 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NavigationService from "../navigation/NavigationService";
 import { HOME_SCREEN_MAIN } from "../navigation/routes";
+import { otpVerification } from "../actions/authActions";
+import { useDispatch } from "react-redux";
 
 const LoginOTP = ({
   otp,
@@ -47,7 +49,8 @@ const LoginOTP = ({
   isChange,
   oldNumber,
 }) => {
-//   const dispatch = useDispatch();
+  const dispatch = useDispatch();
+  console.log(typeof phoneNumber, "phoneNumber")
 //   const loading = useSelector((state) => {
 //     return state.auth.isLoading;
 //   });
@@ -85,15 +88,15 @@ const LoginOTP = ({
       let number = phoneNumber.includes("@") ? phoneNumber : parseInt(phoneNumber);
       console.log(number, "number");
       let data = {
-        signId: isChange ? oldNumber : number,
-        type: isForgot
-          ? "changePassword"
-          : isChange
-          ? "changePhone"
-          : "loginOtp",
-        newNumber: isChange ? number : "",
+        mobile_number: isChange ? oldNumber : number,
+        // type: isForgot
+        //   ? "changePassword"
+        //   : isChange
+        //   ? "changePhone"
+        //   : "loginOtp",
+        // newNumber: isChange ? number : "",
       };
-    //   dispatch(userSignup(data));
+      dispatch(userSignup(data));
     } else {
       const startTime = Date.now();
       await AsyncStorage.setItem("otpStartTime", startTime.toString());
@@ -104,74 +107,6 @@ const LoginOTP = ({
     setIsButtonDisabled(true);
   };
 
-  useEffect(() => {
-    getHash()
-      .then((hashArray) => {
-        if (hashArray && hashArray.length > 0) {
-          setHash(hashArray[0]);
-          console.log(hashArray[0], "hash");
-        }
-      })
-      .catch((error) => {
-        setError(`Error getting hash: ${error.message}`);
-      });
-
-    startOtpListener((receivedMessage) => {
-      setMessage(receivedMessage);
-      console.log(receivedMessage, "receivedMessage");
-      const otpMatch = /(\d{6})/g.exec(receivedMessage);
-      console.log(otpMatch, "otpMatch");
-      if (otpMatch && otpMatch[1]) {
-        const extractedOtp = otpMatch[1];
-        setOtp(extractedOtp);
-        // setCode(extractedOtp);
-        onSubmit(extractedOtp);
-      }
-    })
-      .then(() => setIsListening(true))
-      .catch((error) => {
-        setError(`Error starting listener: ${error.message}`);
-      });
-
-    return () => {
-      removeListener();
-      setIsListening(false);
-    };
-  }, []);
-
-  const onSubmit = async (otpCode) => {
-    const verificationCode = otpCode || otp;
-    if (verificationCode.length !== 6) {
-      console.log(verificationCode, "verificationCode");
-      toastAlert.showToastError("Please provide a valid OTP");
-    } else {
-      let otp = parseInt(verificationCode);
-      // let number = parseInt(phoneNumber);
-      let number = phoneNumber.includes("@") ? phoneNumber : parseInt(phoneNumber);
-      let _data = {
-        signId: number,
-        otp: otp,
-        refCode: referCode,
-      };
-      NavigationService.navigate(HOME_SCREEN_MAIN);
-    //   {
-    //     isChange
-    //       ? dispatch(
-    //           phoneOtpVerification(
-    //             {
-    //               signId: oldNumber,
-    //               otp: otp,
-    //               type: "changePhone",
-    //               newNumber: number,
-    //             },
-    //             onCloseOtp,
-    //             setError
-    //           )
-    //         )
-    //       : dispatch(otpVerification(_data, onCloseOtp, setError, isChange));
-    //   }
-    }
-  };
 
   useEffect(() => {
     let interval;
@@ -206,7 +141,7 @@ const LoginOTP = ({
   const handleForgotFlow = (code) => {
     console.log(otp?.length, "otp?.length");
     // let number = parseInt(phoneNumber);
-    let number = phoneNumber.includes("@") ? phoneNumber : parseInt(phoneNumber);
+    let number = typeof phoneNumber === "number" ? maskNumber(phoneNumber) : maskEmail(phoneNumber);
     let otp = parseInt(code);
     onResetPassword();
     // dispatch(
@@ -252,7 +187,7 @@ const LoginOTP = ({
       </AppText>
       <View style={styles.menuView}>
         <AppText type={FORTEEN} color={BLACK} weight={POPPINS_MEDIUM}>
-          OTP has sent to {phoneNumber.includes("@") ? maskEmail(phoneNumber) :  maskNumber(phoneNumber)}
+          OTP has sent to {typeof phoneNumber === "number" ? maskNumber(phoneNumber) : maskEmail(phoneNumber)}
         </AppText>
         <TouchableOpacity onPress={onCloseOtp}>
           <AppText type={FORTEEN} color={BLACK} weight={POPPINS_MEDIUM}>
@@ -266,49 +201,52 @@ const LoginOTP = ({
         focusColor={colors.darkBlue}
         focusStickBlinkingDuration={500}
         onTextChange={(text) => setOtp(text)}
-        onFilled={(code) => {
-          // onCloseOtp();
-          if (isForgot) {
-                  handleForgotFlow(code);
-                } else {
-                  onCloseOtp();
-                }
-
-        }}
         // onFilled={(code) => {
-        //   if (code.length === 6) {
-        //     // let number = parseInt(phoneNumber);
-        //     let number = phoneNumber.includes("@") ? phoneNumber : parseInt(phoneNumber);
-        //     if (isForgot) {
-        //       handleForgotFlow(code);
-        //     } else {
-        //       let otp = parseInt(code);
-        //       let _data = {
-        //         signId: number,
-        //         otp: otp,
-        //         refCode: referCode,
-        //       };
-        //       {
-        //         isChange
-        //           ? dispatch(
-        //               phoneOtpVerification(
-        //                 {
-        //                   signId: oldNumber,
-        //                   otp: otp,
-        //                   type: "changePhone",
-        //                   newNumber: number,
-        //                 },
-        //                 onCloseOtp,
-        //                 setError
-        //               )
-        //             )
-        //           : dispatch(
-        //               otpVerification(_data, onCloseOtp, setError, isChange)
-        //             );
-        //       }
-        //     }
-        //   }
+        //   // onCloseOtp();
+        //   if (isForgot) {
+        //           handleForgotFlow(code);
+        //         } else {
+        //           onCloseOtp();
+        //         }
+
         // }}
+        onFilled={(code) => {
+          if (code.length === 6) {
+            // let number = parseInt(phoneNumber);
+            let number = typeof phoneNumber === "number" ? parseInt(phoneNumber) : phoneNumber;
+            if (isForgot) {
+              handleForgotFlow(code);
+            } else {
+              let otp = parseInt(code);
+              let _data = {
+                mobile_number: number,
+                otp: otp,
+                referral_code: referCode,
+              };
+              dispatch(
+                        otpVerification(_data, onCloseOtp, setError, isChange)
+                      );
+              // {
+              //   isChange
+              //     ? dispatch(
+              //         phoneOtpVerification(
+              //           {
+              //             signId: oldNumber,
+              //             otp: otp,
+              //             type: "changePhone",
+              //             newNumber: number,
+              //           },
+              //           onCloseOtp,
+              //           setError
+              //         )
+              //       )
+              //     : dispatch(
+              //         otpVerification(_data, onCloseOtp, setError, isChange)
+              //       );
+              // }
+            }
+          }
+        }}
         autoFocus={true}
         textInputProps={{
           accessibilityLabel: "One-Time Password",

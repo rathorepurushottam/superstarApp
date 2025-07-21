@@ -212,7 +212,7 @@ const getTextStyle = (
       style['color'] = colors.lightBlue;
       break;
     case BLACKOPACITY:
-      style['color'] = NewColor.linerBlacklight;
+      style['color'] = colors.blackOpacity;
       break;
     case RED:
       style['color'] = 'red';
@@ -289,7 +289,7 @@ const getTextStyle = (
       style['color'] = colors.brownYellow;
       break;
     default:
-      style['color'] = 'white';
+      style['color'] = colors.black;
       break;
   }
 

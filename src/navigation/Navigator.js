@@ -1,7 +1,8 @@
 import React from "react";
 import { Platform, View } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, useIsFocused } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import {createDrawerNavigator} from '@react-navigation/drawer';
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import NavigationService from "./NavigationService";
 import {
@@ -10,10 +11,14 @@ import {
   AUTHSTACK,
   BOTTOM_NAVIGATION_STACK,
   CREATE_POST_SCREEEN,
+  EDIT_PROFILE_SCREEN,
   HOME_SCREEN_MAIN,
   LEADERBOARD_SCREEN,
   LOGIN,
+  MORE_MENU_SCREEN,
+  PREVIEW_POST_SCREEN,
   PROFILE_SCREEN,
+  VIEW_POST_SCREEN,
   WITHDRAW_SCREEN,
 } from "./routes";
 import AuthLoading from "../screens/AuthLoading";
@@ -31,8 +36,14 @@ import Profile from "../screens/Profile";
 import Contest from "../screens/Contest";
 import CreatePost from "../screens/CreatePost";
 import Leaderboard from "../screens/Leaderboard";
+import EditProfile from "../screens/EditProfile";
+import CustomDrawer from "../screens/CustomDrawer";
+import MoreMenu from "../screens/MoreMenu";
+import PreviewPost from "../screens/PreviewPost";
+import ViewPost from "../screens/ViewPost";
 
 const Stack = createNativeStackNavigator();
+const Drawer = createDrawerNavigator();
 
 const Navigator = () => {
   return (
@@ -87,6 +98,26 @@ const RootStackScreen = () => (
      <Stack.Screen
       name={LEADERBOARD_SCREEN}
       component={Leaderboard}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name={MORE_MENU_SCREEN}
+      component={MoreMenu}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name={EDIT_PROFILE_SCREEN}
+      component={EditProfile}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name={PREVIEW_POST_SCREEN}
+      component={PreviewPost}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name={VIEW_POST_SCREEN}
+      component={ViewPost}
       options={{ headerShown: false }}
     />
     
@@ -290,3 +321,48 @@ const BottomMainTab = () => {
     </BottomTab.Navigator>
   );
 };
+
+// const ProfileDrawer = ({navigation}) => {
+//   const isFocused = useIsFocused();
+//   return (
+//     <Drawer.Navigator
+//       drawerStyle={{width: '75%'}}
+//       drawerContent={props => (
+//         <CustomDrawer
+//           {...props}
+//           navigation={navigation}
+//           isFocused={isFocused}
+//         />
+//       )}
+//       screenOptions={{
+//         drawerActiveBackgroundColor: '#EBF4FF',
+//         drawerActiveTintColor: 'black',
+//         drawerInactiveBackgroundColor: 'blue',
+//         headerShown: false,
+//       }}
+//       drawerPosition={'left'}>
+//       <Drawer.Screen
+//         name="Profile"
+//         component={ProfileStack}
+//         options={{
+//           headerShown: false,
+//         }}
+//         drawerStyle={{borderWidth: 1}}
+//       />
+//     </Drawer.Navigator>
+//   );
+// };
+
+
+// const ProfileStack = () => (
+//   <Stack.Navigator
+//     screenOptions={{
+//       headerShown: false,
+//     }}>
+//     <Stack.Screen
+//       name={'Profile'}
+//       component={Profile}
+//       options={{headerShown: false}}
+//     />
+//   </Stack.Navigator>
+// );

@@ -24,8 +24,8 @@ import PrimaryButton from "./PrimaryButton";
 import { useRef, useState } from "react";
 import ForgotPassword from "./ForgotPassword";
 import { toastAlert, validatePassword } from "../helper/utility";
-// import { useDispatch, useSelector } from "react-redux";
-// import { forgotPassword, userSignup } from "../actions/authActions";
+import { useDispatch, useSelector } from "react-redux";
+import { forgotPassword, userSignup } from "../actions/authActions";
 // import { SpinnerSecond } from "./SnipperSecond";
 
 const ResetPassword = ({
@@ -37,7 +37,7 @@ const ResetPassword = ({
   setResetPasswords,
   setIsOpen,
 }) => {
-//   const dispatch = useDispatch();
+  const dispatch = useDispatch();
 //   const loading = useSelector((state) => {
 //     return state.auth.isLoading;
 //   });
@@ -73,6 +73,13 @@ const ResetPassword = ({
       );
       return;
     }
+       let data = {
+        otp: parseInt(otp),
+        new_password: newPassword,
+        // confirmPassword: confirmPass,
+        mobile_number: signId,
+      };
+      dispatch(forgotPassword(data, onCloseResetPass, setIsOpen));
     // if (isProfile) {
     //   if (!currentPass) {
     //     toastAlert.showToastError(
