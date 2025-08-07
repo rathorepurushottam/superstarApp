@@ -41,6 +41,7 @@ import CustomDrawer from "../screens/CustomDrawer";
 import MoreMenu from "../screens/MoreMenu";
 import PreviewPost from "../screens/PreviewPost";
 import ViewPost from "../screens/ViewPost";
+import Support from "../screens/Support";
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -120,6 +121,7 @@ const RootStackScreen = () => (
       component={ViewPost}
       options={{ headerShown: false }}
     />
+    <Stack.Screen name={'Support_Screen'} component={Support} options={{ headerShown: false }}/>
     
     
   </Stack.Navigator>

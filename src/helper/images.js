@@ -58,3 +58,5 @@ export const cameraBgIcon = require('../../assets/images/cameraBg.png');
 export const captureIcon = require('../../assets/images/captureIcon.png');
 export const reelLikeIcon = require('../../assets/images/reelLikeIcon.png');
 export const logout = require('../../assets/images/logout.png');
+export const superstarLogo = require('../../assets/images/superstarLogo.png');
+export const badgeIcon = require('../../assets/images/badgeIcon.png');

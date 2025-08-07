@@ -42,6 +42,8 @@ export default (appOperation) => ({
     appOperation.get(`transactions`, undefined, undefined, CUSTOMER_TYPE),
   get_tds_transactions: () =>
     appOperation.get(`transactions/gstTdsCertificate`, undefined, undefined, CUSTOMER_TYPE),
+  support_for_user: (data) =>
+    appOperation.post(`support/create`, data, CUSTOMER_TYPE),
   get_avatar_list: () =>
     appOperation.get(`admin/avatar-list`, undefined, undefined, CUSTOMER_TYPE),
   sendKycOtp: (data) =>

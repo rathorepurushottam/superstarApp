@@ -47,21 +47,22 @@ const MoreMenu = () => {
         style={{ margin: 20, justifyContent: "space-between", height: "90%" }}
       >
         <View>
-          <View
+          <TouchableOpacity
             style={{
               flexDirection: "row",
               alignItems: "center",
               gap: 20,
               marginVertical: 20,
             }}
+            onPress={() => NavigationService.navigate('Support_Screen')}
           >
             <FastImage
               source={archiveIcon}
               resizeMode="contain"
               style={{ width: 23, height: 23 }}
             />
-            <AppText type={FIFTEEN}>Archive</AppText>
-          </View>
+            <AppText type={FIFTEEN}>Support</AppText>
+          </TouchableOpacity>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
             <FastImage
               source={activityIcon}

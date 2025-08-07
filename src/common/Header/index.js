@@ -15,7 +15,13 @@ import {
   TWELVE,
   WHITE,
 } from "../AppText";
-import { iconbell, threeIcon, userIcon, WalletIcon } from "../../helper/images";
+import {
+  iconbell,
+  superstarLogo,
+  threeIcon,
+  userIcon,
+  WalletIcon,
+} from "../../helper/images";
 import LinearGradient from "react-native-linear-gradient";
 import { useSelector } from "react-redux";
 import NavigationService from "../../navigation/NavigationService";
@@ -32,8 +38,18 @@ const Header = () => {
   // let totalBalance = deposits + winnings + cashbackRewards + bonusRewards;
   return (
     <View style={styles.topContainer}>
-      <View style={{ width: "50%" }}>
-        <TouchableOpacity>
+      <View
+        style={{
+          width: "50%",
+          justifyContent: "space-between",
+          flexDirection: "row",
+          alignItems: "center",
+        }}
+      >
+        <TouchableOpacity
+          onPress={() => NavigationService.navigate("Account")}
+          style={{ width: "25%" }}
+        >
           <FastImage
             resizeMode="contain"
             source={
@@ -44,6 +60,13 @@ const Header = () => {
             style={styles.personImage}
           />
         </TouchableOpacity>
+        <View style={{ width: "25%" }}>
+          <FastImage
+            source={superstarLogo}
+            resizeMode="contain"
+            style={{ width: 40, height: 40 }}
+          />
+        </View>
       </View>
 
       <View
@@ -52,7 +75,7 @@ const Header = () => {
           justifyContent: "space-between",
           width: "50%",
           alignItems: "center",
-          gap: 10
+          gap: 10,
         }}
       >
         <TouchableOpacity onPress={() => NavigationService.navigate("Wallet")}>
@@ -166,6 +189,6 @@ const styles = StyleSheet.create({
   notifiView: {
     height: 28,
     with: 28,
-    marginRight: -8,
+    // marginRight: -8,
   },
 });

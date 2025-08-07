@@ -32,8 +32,16 @@ import { useEffect, useState } from "react";
 import NavigationService from "../navigation/NavigationService";
 import { CREATE_POST_SCREEEN, LEADERBOARD_SCREEN } from "../navigation/routes";
 import { useDispatch, useSelector } from "react-redux";
-import { getCompletedContest, getContestCategories, getLiveContest, getMyContest, getUpcomingContest } from "../actions/profileAction";
+import {
+  getCompletedContest,
+  getContestCategories,
+  getLiveContest,
+  getMyContest,
+  getUpcomingContest,
+} from "../actions/profileAction";
 import TimerCountdown from "../common/TimerCountdown";
+import moment from "moment";
+import { BASE_URL, timeDifference } from "../helper/utility";
 
 const renderItem = ({ item }) => {
   return (
@@ -70,7 +78,14 @@ const renderItem = ({ item }) => {
 
 const upcomingComponent = ({ item }) => {
   return (
-    <View style={{ margin: 10, borderWidth: 1, borderColor: "#EDEDED", borderRadius: 10 }}>
+    <View
+      style={{
+        margin: 10,
+        borderWidth: 1,
+        borderColor: "#EDEDED",
+        borderRadius: 10,
+      }}
+    >
       <LinearGradient
         colors={["#0DA33F", "#14B249"]}
         start={{ x: 0, y: 0 }}
@@ -137,7 +152,7 @@ const upcomingComponent = ({ item }) => {
               }}
             >
               <FastImage
-                source={danceIcon}
+                source={{ uri: BASE_URL + item?.category?.categoryIcon }}
                 resizeMode="contain"
                 style={{ width: 24, height: 24 }}
                 tintColor={colors.white}
@@ -202,7 +217,7 @@ const upcomingComponent = ({ item }) => {
           borderWidth: 1,
           borderColor: "#EDEDED",
           borderBottomLeftRadius: 10,
-          borderBottomRightRadius: 10
+          borderBottomRightRadius: 10,
         }}
       >
         <View
@@ -214,7 +229,6 @@ const upcomingComponent = ({ item }) => {
             backgroundColor: "#FFFFFF",
             justifyContent: "center",
             padding: 8,
-           
           }}
         >
           <FastImage
@@ -264,7 +278,15 @@ const upcomingComponent = ({ item }) => {
 
 const completedComponent = ({ item }) => {
   return (
-    <TouchableOpacity style={{ margin: 10, borderWidth: 1, borderColor: "#EDEDED", borderRadius: 10}} onPress={() => NavigationService.navigate(LEADERBOARD_SCREEN)}>
+    <TouchableOpacity
+      style={{
+        margin: 10,
+        borderWidth: 1,
+        borderColor: "#EDEDED",
+        borderRadius: 10,
+      }}
+      onPress={() => NavigationService.navigate(LEADERBOARD_SCREEN)}
+    >
       <LinearGradient
         colors={["#A30D0D", "#E95A5A"]}
         start={{ x: 0, y: 1 }}
@@ -288,7 +310,7 @@ const completedComponent = ({ item }) => {
         >
           <Icon name="calendar-month" color={colors.white} size={25} />
           <AppText type={ELEVEN} color={WHITE} weight={POPPINS_SEMI_BOLD}>
-            25/05/2025
+            {moment(item?.end_date).subtract(10, "days").calendar()}
           </AppText>
         </View>
         <View
@@ -300,7 +322,7 @@ const completedComponent = ({ item }) => {
         >
           <Icon name="access-time" color={colors.white} size={25} />
           <AppText type={ELEVEN} color={WHITE} weight={POPPINS_SEMI_BOLD}>
-            12:00 PM - 02:00 PM
+          {timeDifference(new Date(item?.start_date))} - {timeDifference(new Date(item?.end_date))}
           </AppText>
         </View>
       </LinearGradient>
@@ -331,14 +353,14 @@ const completedComponent = ({ item }) => {
               }}
             >
               <FastImage
-                source={danceIcon}
+                source={{ uri: BASE_URL + item?.category?.categoryIcon }}
                 resizeMode="contain"
                 style={{ width: 24, height: 24 }}
                 tintColor={colors.white}
               />
             </View>
             <AppText color={BLACK} weight={POPPINS_SEMI_BOLD} type={SIXTEEN}>
-              Dancing
+              {item?.category?.categoryName}
             </AppText>
           </View>
           <View
@@ -352,28 +374,48 @@ const completedComponent = ({ item }) => {
             }}
           >
             <AppText color={BLACK} weight={POPPINS_BOLD} type={FORTEEN}>
-              ₹200
+              ₹{item?.joining_fee}
             </AppText>
           </View>
         </View>
+        <AppText
+          style={{ alignSelf: "center", marginBottom: 10, color: "#D9AF23" }}
+          type={FORTEEN}
+        >
+          {item?.contest_name}
+        </AppText>
         <View
           style={{
-            marginLeft: 20,
+            marginHorizontal: 20,
             marginBottom: 15,
             flexDirection: "row",
-            gap: 10,
+            justifyContent: "space-between",
           }}
         >
-          <AppText color={BLACK} type={THIRTEEN} weight={POPPINS_MEDIUM}>
-            Total Participants :
-          </AppText>
-          <AppText
-            style={{ color: "#D24231" }}
-            type={THIRTEEN}
-            weight={POPPINS_MEDIUM}
-          >
-            100
-          </AppText>
+          <View style={{ flexDirection: "row", gap: 10 }}>
+            <AppText color={BLACK} type={THIRTEEN} weight={POPPINS_MEDIUM}>
+              Total Participants :
+            </AppText>
+            <AppText
+              style={{ color: "#D24231" }}
+              type={THIRTEEN}
+              weight={POPPINS_MEDIUM}
+            >
+              {item?.post_limit}
+            </AppText>
+          </View>
+          <View style={{ flexDirection: "row", gap: 10 }}>
+            <AppText color={BLACK} type={THIRTEEN} weight={POPPINS_MEDIUM}>
+              Total Posts :
+            </AppText>
+            <AppText
+              style={{ color: "#D24231" }}
+              type={THIRTEEN}
+              weight={POPPINS_MEDIUM}
+            >
+              {item?.totalPosts}
+            </AppText>
+          </View>
         </View>
       </View>
       <View
@@ -382,7 +424,7 @@ const completedComponent = ({ item }) => {
           borderWidth: 1,
           borderColor: "#EDEDED",
           borderBottomLeftRadius: 10,
-          borderBottomRightRadius: 10
+          borderBottomRightRadius: 10,
         }}
       >
         <View
@@ -394,7 +436,6 @@ const completedComponent = ({ item }) => {
             backgroundColor: "#FFFFFF",
             // justifyContent: "center",
             padding: 8,
-           
           }}
         >
           <View
@@ -450,10 +491,17 @@ const completedComponent = ({ item }) => {
 
 const liveComponent = ({ item }) => {
   return (
-    <TouchableOpacity style={{ margin: 10, borderWidth: 1, borderColor: "#EDEDED", borderRadius: 10 }}
-    onPress={() => NavigationService.navigate(CREATE_POST_SCREEEN, {contest: item})}
+    <TouchableOpacity
+      style={{
+        margin: 10,
+        borderWidth: 1,
+        borderColor: "#EDEDED",
+        borderRadius: 10,
+      }}
+      onPress={() =>
+        NavigationService.navigate(CREATE_POST_SCREEEN, { contest: item })
+      }
     >
-     
       <View
         style={{
           backgroundColor: "#F8F8F8",
@@ -494,14 +542,14 @@ const liveComponent = ({ item }) => {
               />
             </View>
             <AppText color={BLACK} weight={POPPINS_SEMI_BOLD} type={SIXTEEN}>
-             {item?.category?.categoryName}
+              {item?.category?.categoryName}
             </AppText>
           </View>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
             <Icon name="access-time" size={20} color={colors.black} />
             {/* <AppText style={{ color: "#DA5821" }}>01:00 left</AppText>
              */}
-             <TimerCountdown />
+            <TimerCountdown />
           </View>
           <View
             style={{
@@ -518,6 +566,12 @@ const liveComponent = ({ item }) => {
             </AppText>
           </View>
         </View>
+        <AppText
+          style={{ alignSelf: "center", marginVertical: 10, color: "#D9AF23" }}
+          type={FORTEEN}
+        >
+          {item?.contest_name}
+        </AppText>
         <View
           style={{
             flexDirection: "row",
@@ -558,7 +612,7 @@ const liveComponent = ({ item }) => {
           borderWidth: 1,
           borderColor: "#EDEDED",
           borderBottomLeftRadius: 10,
-          borderBottomRightRadius: 10
+          borderBottomRightRadius: 10,
         }}
       >
         <View
@@ -570,7 +624,6 @@ const liveComponent = ({ item }) => {
             backgroundColor: "#FFFFFF",
             justifyContent: "center",
             padding: 8,
-            
           }}
         >
           <FastImage
@@ -621,7 +674,12 @@ const liveComponent = ({ item }) => {
 const myConstestComponent = ({ item }) => {
   return (
     <TouchableOpacity
-      style={{ margin: 10, borderWidth: 1, borderColor: "#EDEDED", borderRadius: 10 }}
+      style={{
+        margin: 10,
+        borderWidth: 1,
+        borderColor: "#EDEDED",
+        borderRadius: 10,
+      }}
       onPress={() => NavigationService.navigate(LEADERBOARD_SCREEN)}
     >
       <View
@@ -664,7 +722,7 @@ const myConstestComponent = ({ item }) => {
               />
             </View>
             <AppText color={BLACK} weight={POPPINS_SEMI_BOLD} type={SIXTEEN}>
-            {item?.category?.categoryName}
+              {item?.category?.categoryName}
             </AppText>
           </View>
           <View
@@ -678,7 +736,7 @@ const myConstestComponent = ({ item }) => {
             }}
           >
             <AppText color={BLACK} weight={POPPINS_BOLD} type={FORTEEN}>
-            ₹{item?.joining_fee}
+              ₹{item?.joining_fee}
             </AppText>
           </View>
         </View>
@@ -729,7 +787,7 @@ const myConstestComponent = ({ item }) => {
               Prize Pool : ₹{item?.prize_pool}
             </AppText>
             <AppText color={BLACK} type={TWELVE} weight={POPPINS_SEMI_BOLD}>
-              First Price :  ₹{item?.prize_pool}
+              First Price : ₹{item?.prize_pool}
             </AppText>
           </View>
         </View>
@@ -742,7 +800,7 @@ const myConstestComponent = ({ item }) => {
           borderWidth: 1,
           borderBottomRightRadius: 10,
           borderBottomLeftRadius: 10,
-          overflow: "hidden"
+          overflow: "hidden",
         }}
       >
         <View
@@ -767,7 +825,7 @@ const myConstestComponent = ({ item }) => {
               First Prize
             </AppText>
             <AppText color={BLACK} weight={POPPINS_SEMI_BOLD} type={TWENTY}>
-            ₹{item?.prize_pool}
+              ₹{item?.prize_pool}
             </AppText>
           </View>
         </View>
@@ -804,8 +862,16 @@ const myConstestComponent = ({ item }) => {
 
 const emptyComponent = () => {
   return (
-    <View style={{justifyContent: "center", alignItems: "center", marginTop: 20}}>
-      <AppText weight={POPPINS_SEMI_BOLD} type={FIFTEEN} style={{ color: "#8E5A37" }} >No Data Available</AppText>
+    <View
+      style={{ justifyContent: "center", alignItems: "center", marginTop: 20 }}
+    >
+      <AppText
+        weight={POPPINS_SEMI_BOLD}
+        type={FIFTEEN}
+        style={{ color: "#8E5A37" }}
+      >
+        No Data Available
+      </AppText>
     </View>
   );
 };
@@ -814,28 +880,28 @@ const Contest = () => {
   const dispatch = useDispatch();
   const myContest = useSelector((state) => {
     return state.profile.myContest;
-  })
+  });
   const [contest, setContest] = useState("live");
 
   useEffect(() => {
-    dispatch(getMyContest());
+    dispatch(getLiveContest());
   }, []);
 
   const handleChangeContest = (item) => {
-    if(item == 'live') {
+    if (item == "live") {
       dispatch(getLiveContest());
       setContest("live");
-    } else if(item == 'upcoming') {
+    } else if (item == "upcoming") {
       dispatch(getUpcomingContest());
       setContest("upcoming");
-    } else if(item == 'myContest') {
+    } else if (item == "myContest") {
       setContest("myContest");
       dispatch(getMyContest());
-    } else if(item == 'completed') {
+    } else if (item == "completed") {
       setContest("completed");
       dispatch(getCompletedContest());
     }
-  }
+  };
 
   console.log(myContest, "contest");
   return (
@@ -845,8 +911,6 @@ const Contest = () => {
           <Header />
           <SearchInput />
           <View style={styles.contestView}>
-            
-
             <TouchableOpacity
               style={{
                 backgroundColor: contest === "live" ? "#E1D5CD" : "transparent",
@@ -1012,7 +1076,7 @@ const Contest = () => {
 
           <View>
             <FlatList
-              data={contest == 'completed' ? [1,2] :myContest}
+              data={myContest}
               renderItem={
                 contest === "myContest"
                   ? myConstestComponent

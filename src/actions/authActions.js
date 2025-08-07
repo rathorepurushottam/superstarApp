@@ -12,9 +12,8 @@ import { FCM_TOKEN_KEY, USER_TOKEN_KEY } from "../libs/constant";
 //   OTP,
 // } from '../navigation/routes';
 import { setLoading } from "../slices/authSlice";
-import { AUTHSTACK, BOTTOM_NAVIGATION_STACK } from "../navigation/routes";
+import { AUTHSTACK } from "../navigation/routes";
 import NavigationService from "../navigation/NavigationService";
-import { Vibration } from "react-native";
 import { getUserProfile } from "./profileAction";
 import { setUserData } from "../slices/profileSlice";
 // import { setUserData, setWalletCreate } from '../slices/profileSlice';

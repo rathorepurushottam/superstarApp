@@ -19,7 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { BASE_URL, IMAGE_BASE_URL } from "../helper/utility";
 import { toggleLike } from "../actions/profileAction";
 import FastImage from "react-native-fast-image";
-import { heartIcon, likeIcon, reelLikeIcon } from "../helper/images";
+import { badgeIcon, heartIcon, likeIcon, reelLikeIcon } from "../helper/images";
 import { AppText, FIFTEEN, WHITE } from "../common/AppText";
 import CommentBox from "../common/CommentBox";
 
@@ -122,10 +122,12 @@ const ReelsScreen = () => {
         </View>
 
         <View style={styles.rightButtons}>
-          <Image
-            source={{ uri: IMAGE_BASE_URL + item?.posted_by?.profile_photo }}
-            style={styles.avatar}
-          />
+          <TouchableOpacity>
+            <FastImage source={badgeIcon} resizeMode="contain"  style={[{ width: 30, height: 30 }, styles.icon]}/>
+            <AppText color={WHITE} type={FIFTEEN} style={{ marginLeft: 10 }}>
+                0
+              </AppText>
+          </TouchableOpacity>
           <TouchableOpacity onPress={() => postToggleLike(item?._id)}>
             <FastImage
               source={item?.is_liked_by_you ? heartIcon : reelLikeIcon}
@@ -151,12 +153,12 @@ const ReelsScreen = () => {
 
           {/* <Icon name="heart-outline" size={30} color="#fff" style={styles.icon} onPress={() => postToggleLike(item?._id)}/> */}
           
-          <Icon
+          {/* <Icon
             name="arrow-redo-outline"
             size={30}
             color="#fff"
             style={styles.icon}
-          />
+          /> */}
         </View>
       </View>
       <RBSheet

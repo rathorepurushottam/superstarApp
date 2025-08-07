@@ -1,4 +1,10 @@
-import { FlatList, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import {
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 import { AppSafeAreaView } from "../common/AppSafeAreaView";
 import {
   AppText,
@@ -42,7 +48,9 @@ import CommentBox from "../common/CommentBox";
 import RBSheet from "react-native-raw-bottom-sheet";
 import Video from "react-native-video";
 import { SpinnerSecond } from "../common/SpinnerSecond";
-import { useIsFocused } from '@react-navigation/native';
+import { useIsFocused } from "@react-navigation/native";
+import NavigationService from "../navigation/NavigationService";
+import { VIEW_POST_SCREEN } from "../navigation/routes";
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -90,13 +98,25 @@ const Home = () => {
   };
 
   const togglePause = () => {
-      setIsPaused(!isPaused);
-  }
+    setIsPaused(!isPaused);
+  };
 
   const emptyComponent = () => {
     return (
-      <View style={{justifyContent: "center", alignItems: "center", marginTop: 20}}>
-        <AppText weight={POPPINS_SEMI_BOLD} type={FIFTEEN} style={{ color: "#8E5A37" }} >No Data Available</AppText>
+      <View
+        style={{
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: 20,
+        }}
+      >
+        <AppText
+          weight={POPPINS_SEMI_BOLD}
+          type={FIFTEEN}
+          style={{ color: "#8E5A37" }}
+        >
+          No Data Available
+        </AppText>
       </View>
     );
   };
@@ -135,13 +155,15 @@ const Home = () => {
   const onViewableItemsChanged = useRef(({ viewableItems }) => {
     // Only the most visible video should play
     console.log(viewableItems, "viewableItems");
-    setVisibleVideoIds(viewableItems.length > 0 ? [viewableItems[0].item._id] : []);
+    setVisibleVideoIds(
+      viewableItems.length > 0 ? [viewableItems[0].item._id] : []
+    );
   }).current;
 
   const renderPostItem = ({ item, index }) => {
     return (
       <View>
-        <View style={styles.postView}>
+        <TouchableOpacity style={styles.postView} onPress={() => NavigationService.navigate(VIEW_POST_SCREEN, {post: item})}>
           <View
             style={{
               flexDirection: "row",
@@ -183,9 +205,14 @@ const Home = () => {
             // controlsStyles={{}}
             resizeMode="cover"
           /> */}
-          <TouchableWithoutFeedback >
+          <TouchableWithoutFeedback>
             <Video
-              source={{ uri: BASE_URL + "public/" + (item?.video_url || '').replace(/^\/+/,'') }}
+              source={{
+                uri:
+                  BASE_URL +
+                  "public/" +
+                  (item?.video_url || "").replace(/^\/+/, ""),
+              }}
               style={styles.postImage}
               resizeMode="cover"
               // repeat
@@ -233,7 +260,7 @@ const Home = () => {
               style={{ width: 24, height: 24, marginLeft: 20 }}
             /> */}
           </View>
-        </View>
+        </TouchableOpacity>
         <View style={{ marginHorizontal: 20, marginVertical: 5 }}>
           <AppText color={BLACK}>{item?.caption}</AppText>
           <AppText
@@ -250,42 +277,53 @@ const Home = () => {
   return (
     <AppSafeAreaView style={{ backgroundColor: "#FEFEFE" }}>
       {/* <KeyBoardAware> */}
-        <View style={styles.mainView}>
-          <Header />
-          <SearchInput />
-          <View style={{ flex: 1 }}>
-            <AppText
-              weight={POPPINS_SEMI_BOLD}
-              color={BLACK}
-              type={FORTEEN}
-              style={{ margin: 20 }}
-            >
-              Choose Your Category
-            </AppText>
-            {/* #category */}
-            <View style={{ height: 100 }}>
-              <FlatList
-                data={categories}
-                renderItem={renderItem}
-                horizontal
-                keyExtractor={(item) => item.id}
-                showsHorizontalScrollIndicator={true}
-                style={{ height: 90 }} // for debug
-              />
-            </View>
-            <View style={{ flex: 1, marginBottom: 80 }}>
-              <FlatList
-                data={homePosts}
-                renderItem={renderPostItem}
-                keyExtractor={(item) => item._id}
-                onViewableItemsChanged={onViewableItemsChanged}
-                viewabilityConfig={viewabilityConfig}
-                extraData={visibleVideoIds}
-                ListEmptyComponent={emptyComponent}
-              />
-            </View>
+      <View style={styles.mainView}>
+        <Header />
+        <SearchInput />
+        <View style={{ flex: 1 }}>
+          <TouchableOpacity
+            style={{
+              backgroundColor: "#D9AF23",
+              marginTop: 20,
+              alignItems: "center",
+              padding: 10,
+            }}
+            onPress={() => NavigationService.navigate('Contest')}
+          >
+            <AppText>Tap here to Join Contest and earn money</AppText>
+          </TouchableOpacity>
+          <AppText
+            weight={POPPINS_SEMI_BOLD}
+            color={BLACK}
+            type={FORTEEN}
+            style={{ margin: 20 }}
+          >
+            Choose Your Category
+          </AppText>
+          {/* #category */}
+          <View style={{ height: 100 }}>
+            <FlatList
+              data={categories}
+              renderItem={renderItem}
+              horizontal
+              keyExtractor={(item) => item.id}
+              showsHorizontalScrollIndicator={true}
+              style={{ height: 90 }} // for debug
+            />
+          </View>
+          <View style={{ flex: 1, marginBottom: 80 }}>
+            <FlatList
+              data={homePosts}
+              renderItem={renderPostItem}
+              keyExtractor={(item) => item._id}
+              onViewableItemsChanged={onViewableItemsChanged}
+              viewabilityConfig={viewabilityConfig}
+              extraData={visibleVideoIds}
+              ListEmptyComponent={emptyComponent}
+            />
           </View>
         </View>
+      </View>
       {/* </KeyBoardAware> */}
       <RBSheet
         ref={refRBSheetComment}

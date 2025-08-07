@@ -36,7 +36,7 @@ function reset(route) {
 
 function goBack() {
   navigator.dispatch(CommonActions.goBack());
-  closeDrawer();
+  // closeDrawer();
   // navigator._navigation.goBack();
 }
 function openDrawer() {

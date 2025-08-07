@@ -1214,3 +1214,25 @@ export const getPaymentSandboxState =
       dispatch(setLoading(false));
     }
   };
+
+
+
+  export const supportForUser = (data) => async (dispatch) => {
+    try {
+      dispatch(setLoading(true));
+      const res = await appOperation.customer.support_for_user(data);
+      // console.log(res, "commentByUser");
+      // dispatch(setLoading(false));
+      if (res.status) {
+        toastAlert.showToastError(res.message);
+        NavigationService.goBack();
+      } else {
+        toastAlert.showToastError(res.message);
+      }
+    } catch (e) {
+      dispatch(setLoading(false));
+      console.log("error in supportForUser", e);
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };

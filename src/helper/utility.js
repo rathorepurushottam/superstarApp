@@ -8,7 +8,7 @@ import { appOperation } from "../appOperation";
 export const BASE_URL = 'http://192.168.29.86:3333/';
 
 
-export const IMAGE_BASE_URL = 'http://192.168.29.86:3333/public';
+export const IMAGE_BASE_URL = 'http://103.110.127.91:3333/public';
 
 export const onAppStart = async (store) => {
   try {
@@ -113,3 +113,18 @@ export const toastAlert = {
   //   let temp = `Join through my referral link, and we’ll both score some awesome rewards! 💰\n\n1. Download the PokerTales app from here: https://pokertales.com/download-apk/${code}\n2. Get ₹25 Bonus Instantly.\n\n Let’s play and have fun!`;
   //   return temp;
   // };
+
+  export function timeDifference(date) {
+    if (!(date instanceof Date) || isNaN(date)) {
+      return 'Invalid Time';
+    }
+  
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    });
+    // return timeRange = `${formatTime(startDate)} - ${formatTime(endDate)}`;
+  }
+  
+  

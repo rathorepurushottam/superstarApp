@@ -19,7 +19,7 @@ import ForgotPassword from "../common/ForgotPassword";
 import ResetPassword from "../common/ResetPassword";
 import CustomModal from "../common/CustomModal";
 import NavigationService from "../navigation/NavigationService";
-import { BOTTOM_NAVIGATION_STACK, HOME_SCREEN_MAIN } from "../navigation/routes";
+import { AUTHSTACK, BOTTOM_NAVIGATION_STACK, HOME_SCREEN_MAIN } from "../navigation/routes";
 import { userSignup } from "../actions/authActions";
 import { useDispatch, useSelector } from "react-redux";
 import {PermissionsAndroid, Platform} from 'react-native';
@@ -150,7 +150,7 @@ const Login = () => {
         if (isForgot) {
           refRBSheetForgot?.current?.close();
         } else {
-          NavigationService.navigate(BOTTOM_NAVIGATION_STACK);
+          NavigationService.navigate(AUTHSTACK);
         }
       };
 
