@@ -1,70 +1,87 @@
-import {CommonActions, StackActions} from '@react-navigation/native';
-import {DrawerActions} from '@react-navigation/native';
+import { CommonActions, StackActions, DrawerActions } from "@react-navigation/native";
 
-let navigator;
+let navigator; // holds the navigation ref
+let isReady = false; // check if NavigationContainer is mounted
 
 function setTopLevelNavigator(navigatorRef) {
   navigator = navigatorRef;
 }
 
-function navigate(routeName, params) {
-  navigator.dispatch(
-    CommonActions.navigate({
-      name: routeName,
-      params: params,
-    }),
-  );
+function setIsReady(value) {
+  isReady = value;
 }
-function pop(n = 1) {
-  navigator.dispatch(
-    StackActions.pop({
-      n: n,
-    }),
-  );
+
+function navigate(name, params) {
+  if (isReady && navigator) {
+    navigator.dispatch(CommonActions.navigate({ name, params }));
+  } else {
+    console.warn("Navigation not ready yet. Tried navigating to:", name);
+  }
 }
-function push(routeName) {
-  navigator.dispatch(StackActions.push(routeName));
+
+function push(name, params) {
+  if (isReady && navigator) {
+    navigator.dispatch(StackActions.push(name, params));
+  }
 }
-function reset(route) {
-  navigator.dispatch(
-    CommonActions.reset({
-      index: 0,
-      routes: [{name: route}],
-    }),
-  );
+
+function replace(name, params) {
+  if (isReady && navigator) {
+    navigator.dispatch(StackActions.replace(name, params));
+  }
+}
+
+function pop(count = 1) {
+  if (isReady && navigator) {
+    navigator.dispatch(StackActions.pop(count));
+  }
+}
+
+function reset(name, params) {
+  if (isReady && navigator) {
+    navigator.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name, params }],
+      })
+    );
+  }
 }
 
 function goBack() {
-  navigator.dispatch(CommonActions.goBack());
-  // closeDrawer();
-  // navigator._navigation.goBack();
-}
-function openDrawer() {
-  navigator.dispatch(DrawerActions.openDrawer());
+  if (isReady && navigator) {
+    navigator.dispatch(CommonActions.goBack());
+  }
 }
 
-function drawerAction () {
-  navigator.dispatch(DrawerActions.toggleDrawer());
-};
+function openDrawer() {
+  if (isReady && navigator) {
+    navigator.dispatch(DrawerActions.openDrawer());
+  }
+}
 
 function closeDrawer() {
-  navigator.dispatch(DrawerActions.closeDrawer());
+  if (isReady && navigator) {
+    navigator.dispatch(DrawerActions.closeDrawer());
+  }
 }
 
-function replace(routeName, params) {
-  navigator.dispatch(StackActions.replace(routeName, params));
+function toggleDrawer() {
+  if (isReady && navigator) {
+    navigator.dispatch(DrawerActions.toggleDrawer());
+  }
 }
-// add other navigation functions that you need and export them
 
 export default {
-  goBack,
-  navigate,
   setTopLevelNavigator,
-  openDrawer,
-  closeDrawer,
-  pop,
-  reset,
+  setIsReady,
+  navigate,
   push,
   replace,
-  drawerAction,
+  pop,
+  reset,
+  goBack,
+  openDrawer,
+  closeDrawer,
+  toggleDrawer,
 };

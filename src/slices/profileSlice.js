@@ -43,6 +43,7 @@ export const initialState = {
   leaderBoardTransaction: [],
   banStates: [],
   gstSettings: {},
+  contestLeaderBoard: [],
 };
 export const profileSlice = createSlice({
   name: 'profile',
@@ -174,7 +175,9 @@ export const profileSlice = createSlice({
     setGstSettings: (state, {payload}) => {
       state.gstSettings = payload;
     },
-    
+    setContestLeaderBoard: (state, {payload}) => {
+      state.contestLeaderBoard = payload;
+    },
   },
 });
 
@@ -220,6 +223,7 @@ export const {
   setPosts,
   setHomePosts,
   setMyContest,
+  setContestLeaderBoard,
 } = profileSlice.actions;
 
 export default profileSlice.reducer;

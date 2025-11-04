@@ -91,33 +91,47 @@ export class AppOperation {
       });
 
       let bodyData = null;
-      if (data instanceof FormData) {
-        bodyData = data;
-        headers['Content-Type'] = 'multipart/form-data';
-      } else {
-        bodyData = JSON.stringify(data);
+      // Don't send body for GET and DELETE requests
+      if (method !== 'GET' && method !== 'DELETE') {
+        if (data instanceof FormData) {
+          bodyData = data;
+          headers['Content-Type'] = 'multipart/form-data';
+        } else if (data !== null && data !== undefined) {
+          bodyData = JSON.stringify(data);
+        }
       }
 
-      fetch(uri, { method, headers, body: bodyData })
+      const fetchOptions = { method, headers };
+      if (bodyData !== null) {
+        fetchOptions.body = bodyData;
+      }
+      
+      console.log('Fetch options:', fetchOptions);
+
+      fetch(uri, fetchOptions)
         .then(async response => {
-          // console.log(response, "response");
+          console.log('Response status:', response.status, 'OK:', response.ok);
           let status = response.status;
           if (response.ok) {
             try {
               const responseData = await response
                 .text();
+              console.log('Response data:', responseData);
               let jsonData = JSON.parse(responseData);
               resolve({ ...jsonData, code: status });
             } catch (errorResponse) {
+              console.log('Parse error:', errorResponse);
               return await Promise.reject({ code: status, data: errorResponse });
             }
           }
           // Possible 401 or other network error
           const errorResponse_1 = await response
             .text();
+          console.log('Error response:', errorResponse_1);
           return await Promise.reject({ code: status, data: errorResponse_1 });
         })
         .catch(error => {
+          console.log('Catch error:', error);
           const customError = this.getErrorMessageForResponse(error);
           reject(new ApiError(customError));
         });

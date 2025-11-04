@@ -1,282 +1,263 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   View,
   Text,
   FlatList,
-  Dimensions,
   StyleSheet,
-  Image,
+  Dimensions,
   TouchableWithoutFeedback,
-  SafeAreaView,
   TouchableOpacity,
+  Image,
 } from "react-native";
-import RBSheet from "react-native-raw-bottom-sheet";
 import Video from "react-native-video";
-import Icon from "react-native-vector-icons/Ionicons";
-import { useIsFocused, useRoute } from "@react-navigation/native";
-import { reel1, reel2, reel3, reel4 } from "../helper/videos";
-import { useDispatch, useSelector } from "react-redux";
-import { BASE_URL, IMAGE_BASE_URL } from "../helper/utility";
-import { toggleLike } from "../actions/profileAction";
 import FastImage from "react-native-fast-image";
-import { backIcon, heartIcon, likeIcon, reelLikeIcon } from "../helper/images";
-import { AppText, FIFTEEN, WHITE } from "../common/AppText";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  followUser,
+  toggleLike,
+  toggleVote,
+  unFollowUser,
+} from "../actions/profileAction";
+import { BASE_URL, IMAGE_BASE_URL, shareToAny } from "../helper/utility";
+import {
+  backIcon,
+  badgeIcon,
+  commentIcon,
+  heartIcon,
+  reelLikeIcon,
+  shareIcon,
+} from "../helper/images";
+import {
+  AppText,
+  ELEVEN,
+  FIFTEEN,
+  SEMI_BOLD,
+  TEN,
+  WHITE,
+} from "../common/AppText";
 import CommentBox from "../common/CommentBox";
+import RBSheet from "react-native-raw-bottom-sheet";
 import { colors } from "../theme/color";
 import NavigationService from "../navigation/NavigationService";
+import { AppSafeAreaView } from "../common/AppSafeAreaView";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { height, width } = Dimensions.get("window");
 
-const videoList = [
-  {
-    id: "1",
-    uri: reel1,
-    user: "john_doe",
-    caption: "City Lights Vibes",
-    avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-  },
-  {
-    id: "2",
-    uri: reel2,
-    user: "jane_smith",
-    caption: "Nature is healing 🌿",
-    avatar: "https://randomuser.me/api/portraits/women/2.jpg",
-  },
-  {
-    id: "3",
-    uri: reel3,
-    user: "jane_smith",
-    caption: "Nature is healing 🌿",
-    avatar: "https://randomuser.me/api/portraits/women/2.jpg",
-  },
-  {
-    id: "4",
-    uri: reel4,
-    user: "jane_smith",
-    caption: "Nature is healing 🌿",
-    avatar: "https://randomuser.me/api/portraits/women/2.jpg",
-  },
-];
+const ViewPost = ({ route }) => {
+  const dispatch = useDispatch();
+  const userData = useSelector((state) => state.profile.userData);
+  const homePosts = useSelector((state) => state.profile.homePosts);
 
-const ViewPost = () => {
-  const route = useRoute();
-  let item = route?.params?.post;
-
-  console.log(route?.params?.post, "route");
-  console.log(userData, "userData");
-  //   const dispatch = useDispatch();
+  // Get data from route params or use homePosts as default
+  const source = route?.params?.source || 'home';
+  const postsData = route?.params?.posts || homePosts;
+  const initialIndex = route?.params?.postIndex ?? 0;
+  const clickedPost = route?.params?.post || postsData[0];
+  
   const refRBSheetComment = useRef();
+  const insets = useSafeAreaInsets();
+  const videoHeight = height - insets.top - insets.bottom;
+
+  const [pausedVideos, setPausedVideos] = useState({});
   const [allComments, setAllComments] = useState([]);
-  const [comment, SetComment] = useState("");
-  //   const [currentVisibleIndex, setCurrentVisibleIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-  //   const focused = useIsFocused();
-  const userData = useSelector((state) => {
-    return state.profile.userData;
-  });
+  const [comment, setComment] = useState("");
 
-  //   const homePosts = useSelector((state) => {
-  //     return state.profile.homePosts;
-  //   });
+  const [currentVisibleIndex, setCurrentVisibleIndex] = useState(
+    source === 'profile' 
+      ? initialIndex 
+      : postsData.findIndex((p) => p._id === clickedPost._id)
+  );
 
-  //   console.log(homePosts, "homePosts");
+  const handleViewableItemsChanged = useRef(({ viewableItems }) => {
+    if (viewableItems.length > 0) {
+      setCurrentVisibleIndex(viewableItems[0].index);
+    }
+  }).current;
 
-  //   useEffect(() => {
-  //     !focused ? setIsPaused(true) : setIsPaused(false);
-  //   }, [focused]);
-
-  const postToggleLike = (id) => {
-    dispatch(toggleLike(id));
-  };
-
-  const openCommentBox = (item) => {
-    setAllComments(item);
-    refRBSheetComment?.current?.open();
-  };
-
-  const closeCommentBox = () => {
-    refRBSheetComment?.current?.close();
-  };
-
-  //   const onViewableItemsChanged = useRef(({ viewableItems }) => {
-  //     if (viewableItems.length > 0) {
-  //       setCurrentVisibleIndex(viewableItems[0].index);
-  //       setIsPaused(false); // Auto-play on scroll
-  //     }
-  //   }).current;
-
-  //   const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 90 });
+  const viewConfigRef = useRef({ viewAreaCoveragePercentThreshold: 80 });
 
   const togglePause = (index) => {
-    if (index === currentVisibleIndex) {
-      setIsPaused((prev) => !prev);
+    setPausedVideos((prev) => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
+  };
+
+  const postToggleLike = (index) => {
+    dispatch(toggleLike(postsData[index]._id));
+    postsData[index] = {
+      ...postsData[index],
+      is_liked_by_you: !postsData[index].is_liked_by_you,
+      totalLikes: postsData[index].is_liked_by_you
+        ? postsData[index].totalLikes - 1
+        : postsData[index].totalLikes + 1,
+    };
+    setPausedVideos({ ...pausedVideos });
+  };
+
+  const openCommentBox = (post) => {
+    setAllComments(post.comments || []);
+    refRBSheetComment.current?.open();
+  };
+
+  const handleAddComment = (newComment) => {
+    setAllComments((prev) => [...prev, newComment]);
+    postsData[currentVisibleIndex].totalComments += 1;
+    setPausedVideos({ ...pausedVideos });
+  };
+
+  const handleCheckFollow = (item) => {
+    console.log("handleCheckFollow", item?.is_followed_by_you);
+    if (item.is_followed_by_you) {
+      dispatch(unFollowUser(item?.posted_by?._id));
+    } else {
+      dispatch(followUser(item?.posted_by?._id));
     }
   };
 
-  //   const renderItem = ({ item, index }) => (
-  //     <SafeAreaView style={styles.videoContainer}>
-  //       <TouchableWithoutFeedback onPress={() => togglePause(index)}>
-  //         <Video
-  //           source={{ uri: BASE_URL + "public/" + item?.video_url }}
-  //           style={StyleSheet.absoluteFillObject}
-  //           resizeMode="cover"
-  //           repeat
-  //           paused={index !== currentVisibleIndex || isPaused}
-  //         />
-  //       </TouchableWithoutFeedback>
+  const postToggleVote = (id) => {
+    dispatch(toggleVote(id));
+  };
 
-  //       <View style={styles.overlay}>
-  //         <View style={styles.leftText}>
-  //           <Text style={styles.username}>@{item?.posted_by?.username}</Text>
-  //           <Text style={styles.caption}>{item.caption}</Text>
-  //         </View>
-
-  //         <View style={styles.rightButtons}>
-  //           <Image
-  //             source={{ uri: IMAGE_BASE_URL + item?.posted_by?.profile_photo }}
-  //             style={styles.avatar}
-  //           />
-  //           <TouchableOpacity onPress={() => postToggleLike(item?._id)}>
-  //             <FastImage
-  //               source={item?.is_liked_by_you ? heartIcon : reelLikeIcon}
-  //               resizeMode="contain"
-  //               style={[{ width: 24, height: 24 }, styles.icon]}
-  //               // tintColor={'white'}
-  //             />
-  //            <AppText color={WHITE} type={FIFTEEN} style={{ marginLeft: 10 }}>
-  //                 {item?.totalLikes}
-  //               </AppText>
-  //           </TouchableOpacity>
-  //           <TouchableOpacity onPress={() => openCommentBox(item)}>
-  //           <Icon
-  //             name="chatbubble-outline"
-  //             size={30}
-  //             color="#fff"
-  //             style={styles.icon}
-  //           />
-  //            <AppText color={WHITE} type={FIFTEEN} style={{ marginLeft: 10 }}>
-  //                 {item?.totalComments}
-  //               </AppText>
-  //           </TouchableOpacity>
-
-  //           {/* <Icon name="heart-outline" size={30} color="#fff" style={styles.icon} onPress={() => postToggleLike(item?._id)}/> */}
-
-  //           <Icon
-  //             name="arrow-redo-outline"
-  //             size={30}
-  //             color="#fff"
-  //             style={styles.icon}
-  //           />
-  //         </View>
-  //       </View>
-  //       <RBSheet
-  //         ref={refRBSheetComment}
-  //         closeOnDragDown={true}
-  //         height={350}
-  //         customStyles={{
-  //           container: {
-  //             backgroundColor: '#D8D8D8',
-  //             borderTopLeftRadius: 40,
-  //             borderTopRightRadius: 40,
-  //           },
-  //           draggableIcon: {
-  //             backgroundColor: "transparent",
-  //             display: "none",
-  //           },
-  //         }}
-  //       >
-  //         <CommentBox allComments={allComments} SetComment={SetComment} comment={comment} close={closeCommentBox}/>
-  //       </RBSheet>
-  //     </SafeAreaView>
-  //   );
-
-  //   return (
-  // <FlatList
-  //   data={homePosts}
-  //   renderItem={renderItem}
-  //   keyExtractor={(item) => item.id}
-  //   pagingEnabled
-  //   horizontal={false}
-  //   showsVerticalScrollIndicator={false}
-  //   onViewableItemsChanged={onViewableItemsChanged}
-  //   viewabilityConfig={viewConfigRef.current}
-  // />
-  //   );
-
-  return (
-    <SafeAreaView style={styles.videoContainer}>
-      <TouchableWithoutFeedback>
+  const renderItem = ({ item, index }) => (
+    <View
+      style={{ width: width, height: videoHeight, backgroundColor: "black" }}
+    >
+      <TouchableWithoutFeedback onPress={() => togglePause(index)}>
         <Video
-          source={{ uri: BASE_URL + "public/" + item?.video_url }}
-          style={StyleSheet.absoluteFillObject}
+          source={{ uri: BASE_URL + "public/" + item.video_url }}
+          style={{ width: width, height: videoHeight }}
           resizeMode="cover"
           repeat
-          //   paused={index !== currentVisibleIndex || isPaused}
+          paused={pausedVideos[index] || currentVisibleIndex !== index}
         />
       </TouchableWithoutFeedback>
 
+      {/* Overlay */}
       <View style={styles.overlay}>
-        <TouchableOpacity
-          onPress={() => NavigationService.goBack()}
-          style={{ position: "absolute", top: 10, margin: 10 }}
-        >
-          <FastImage
-            source={backIcon}
-            resizeMode="contain"
-            style={{
-              width: 30,
-              height: 30,
-            }}
-            tintColor={colors.black}
-          />
-        </TouchableOpacity>
-
         <View style={styles.leftText}>
-          <Text style={styles.username}>@{userData?.username}</Text>
-          <Text style={styles.caption}>{item.caption}</Text>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+            <Text style={styles.username}>@{item?.posted_by?.username}</Text>
+            <TouchableOpacity
+              style={{
+                borderWidth: 1,
+                borderColor: colors.white,
+                paddingHorizontal: 10,
+                paddingVertical: 2,
+                borderRadius: 5,
+              }}
+              onPress={() => handleCheckFollow(item)}
+            >
+              <AppText color={WHITE} type={ELEVEN} weight={SEMI_BOLD}>
+                {item?.is_followed_by_you ? "Following" : "Follow"}
+              </AppText>
+            </TouchableOpacity>
+          </View>
+
+          <Text style={styles.caption}>{item?.caption}</Text>
         </View>
 
         <View style={styles.rightButtons}>
           <Image
-            source={{ uri: IMAGE_BASE_URL + userData?.profile_photo }}
+            source={{ uri: IMAGE_BASE_URL + item?.posted_by?.profile_photo }}
             style={styles.avatar}
           />
-          <TouchableOpacity onPress={() => postToggleLike(item?._id)}>
+
+          <TouchableOpacity onPress={() => postToggleVote(item?._id)}>
             <FastImage
-              source={item?.is_liked_by_you ? heartIcon : reelLikeIcon}
+              source={badgeIcon}
               resizeMode="contain"
-              style={[{ width: 24, height: 24 }, styles.icon]}
-              // tintColor={'white'}
+              style={[{ width: 30, height: 30 }, styles.icon]}
+              tintColor={item?.votedByYou ? colors.yellow : colors.white}
             />
             <AppText color={WHITE} type={FIFTEEN} style={{ marginLeft: 10 }}>
+              {item?.totalVote || 0}
+            </AppText>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => postToggleLike(index)}
+            style={styles.iconButton}
+          >
+            <FastImage
+              source={item?.is_liked_by_you ? heartIcon : reelLikeIcon}
+              style={styles.icon}
+              resizeMode="contain"
+            />
+            <AppText color={WHITE} type={FIFTEEN}>
               {item?.totalLikes}
             </AppText>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => openCommentBox(item)}>
-            <Icon
-              name="chatbubble-outline"
-              size={30}
-              color="#fff"
+
+          <TouchableOpacity
+            onPress={() => openCommentBox(item)}
+            style={styles.iconButton}
+          >
+            <FastImage
+              source={commentIcon}
               style={styles.icon}
+              resizeMode="contain"
+              tintColor={colors.white}
             />
-            <AppText color={WHITE} type={FIFTEEN} style={{ marginLeft: 10 }}>
+            <AppText color={WHITE} type={FIFTEEN}>
               {item?.totalComments}
             </AppText>
           </TouchableOpacity>
 
-          {/* <Icon name="heart-outline" size={30} color="#fff" style={styles.icon} onPress={() => postToggleLike(item?._id)}/> */}
-
-          <Icon
-            name="arrow-redo-outline"
-            size={30}
-            color="#fff"
-            style={styles.icon}
-          />
+          <TouchableOpacity onPress={shareToAny} style={styles.iconButton}>
+            <FastImage
+              source={shareIcon}
+              style={styles.icon}
+              resizeMode="contain"
+              tintColor={colors.white}
+            />
+          </TouchableOpacity>
         </View>
       </View>
+    </View>
+  );
+
+  return (
+    <AppSafeAreaView style={{ flex: 1 }}>
+      {/* Floating Back Button */}
+      <TouchableOpacity
+        onPress={() => NavigationService.goBack()}
+        style={{
+          position: "absolute",
+          top: insets.top + 10,
+          left: 20,
+          zIndex: 20,
+        }}
+      >
+        <FastImage
+          source={backIcon}
+          style={{ width: 30, height: 30 }}
+          resizeMode="contain"
+          tintColor={colors.white}
+        />
+      </TouchableOpacity>
+
+      <FlatList
+        data={postsData}
+        renderItem={renderItem}
+        keyExtractor={(item) => item._id}
+        pagingEnabled
+        showsVerticalScrollIndicator={false}
+        initialScrollIndex={currentVisibleIndex >= 0 ? currentVisibleIndex : 0}
+        onViewableItemsChanged={handleViewableItemsChanged}
+        viewabilityConfig={viewConfigRef.current}
+        getItemLayout={(data, index) => ({
+          length: videoHeight,
+          offset: videoHeight * index,
+          index,
+        })}
+      />
+
+      {/* Comment Sheet */}
       <RBSheet
         ref={refRBSheetComment}
-        closeOnDragDown={true}
+        closeOnDragDown
         height={350}
         customStyles={{
           container: {
@@ -284,65 +265,45 @@ const ViewPost = () => {
             borderTopLeftRadius: 40,
             borderTopRightRadius: 40,
           },
-          draggableIcon: {
-            backgroundColor: "transparent",
-            display: "none",
-          },
+          draggableIcon: { backgroundColor: "transparent", display: "none" },
         }}
       >
         <CommentBox
           allComments={allComments}
-          SetComment={SetComment}
+          SetComment={setComment}
           comment={comment}
-          close={closeCommentBox}
+          close={() => refRBSheetComment.current?.close()}
+          onAddComment={handleAddComment}
         />
       </RBSheet>
-    </SafeAreaView>
+    </AppSafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  videoContainer: {
-    height,
-    width,
-    backgroundColor: "black",
-  },
   overlay: {
-    flex: 1,
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
     flexDirection: "row",
     justifyContent: "space-between",
     paddingHorizontal: 12,
-    paddingBottom: 80, // visible above tab bar
+    paddingBottom: 40,
     alignItems: "flex-end",
   },
-  leftText: {
-    flex: 1,
-    justifyContent: "flex-end",
-    marginBottom: 20,
-  },
-  rightButtons: {
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  username: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  caption: {
-    color: "#fff",
-    marginTop: 4,
-    fontSize: 14,
-  },
-  icon: {
-    marginVertical: 12,
-  },
+  leftText: { flex: 1, justifyContent: "flex-end", marginBottom: 20 },
+  username: { color: "#fff", fontSize: 16, fontWeight: "bold" },
+  caption: { color: "#fff", fontSize: 14, marginTop: 4 },
+  rightButtons: { alignItems: "center", marginBottom: 20 },
+  iconButton: { alignItems: "center", marginVertical: 12 },
+  icon: { width: 24, height: 24, marginBottom: 4 },
   avatar: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    borderColor: "#fff",
     borderWidth: 2,
+    borderColor: "#fff",
     marginBottom: 12,
   },
 });

@@ -16,6 +16,12 @@ export default (appOperation) => ({
     appOperation.get(`wallet/getWallet`, undefined, undefined, CUSTOMER_TYPE),
    post_toggle_likes: (id) =>
     appOperation.post(`post/toggle-post-like/${id}`, {}, CUSTOMER_TYPE),
+   follow_user: (id) =>
+    appOperation.post(`profile/follow/${id}`, {}, CUSTOMER_TYPE),
+   un_follow_user: (id) =>
+    appOperation.post(`profile/unfollow/${id}`, {}, CUSTOMER_TYPE),
+   post_vode_likes: (id) =>
+    appOperation.put(`post/vote-reel/${id}`, {}, CUSTOMER_TYPE),
    commmet_by_user: (data) =>
     appOperation.post(`post/add-comment`, data, CUSTOMER_TYPE),
    get_my_contest: () =>
@@ -26,10 +32,14 @@ export default (appOperation) => ({
     appOperation.get(`contest/get-upcoming-contests`, undefined, undefined, CUSTOMER_TYPE),
    get_completed_contest: () =>
     appOperation.get(`contest/get-completed-contests`, undefined, undefined, CUSTOMER_TYPE),
+   get_contest_leader: (id) =>
+    appOperation.get(`leaderboard/getLeaderBoardByContestId/${id}`, undefined, undefined, CUSTOMER_TYPE),
    kyc_verification: (data) =>
     appOperation.patch(`profile/updateBasicInfo`, data, CUSTOMER_TYPE),
    create_post: (data) =>
     appOperation.post(`post/create-post`, data, CUSTOMER_TYPE),
+   delete_post: (id) =>
+    appOperation.delete(`post/delete-post/${id}`, undefined, CUSTOMER_TYPE),
   get_aadhar_otp: (data) =>
     appOperation.post(`kyc/get-aadhar-otp`, data, CUSTOMER_TYPE),
   walletcreate: (id) =>

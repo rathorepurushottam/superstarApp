@@ -1,123 +1,114 @@
+import React from "react";
 import {
-  Platform,
-  StatusBar,
   StyleSheet,
   TouchableOpacity,
   View,
 } from "react-native";
 import FastImage from "react-native-fast-image";
+import LinearGradient from "react-native-linear-gradient";
+import { useSelector } from "react-redux";
+
 import {
   AppText,
   BLACK,
   FORTEEN,
   POPPINS_BOLD,
-  POPPINS_SEMI_BOLD,
-  TWELVE,
-  WHITE,
 } from "../AppText";
 import {
   iconbell,
-  superstarLogo,
-  threeIcon,
+  SuperStar,
   userIcon,
   WalletIcon,
+  searchIcon,
 } from "../../helper/images";
-import LinearGradient from "react-native-linear-gradient";
-import { useSelector } from "react-redux";
 import NavigationService from "../../navigation/NavigationService";
 import { IMAGE_BASE_URL } from "../../helper/utility";
 
-const Header = () => {
-  const userWallet = useSelector((state) => {
-    return state.profile.userWallet;
-  });
-  const userData = useSelector((state) => {
-    return state.profile.userData;
-  });
-  // let { deposits, winnings, cashbackRewards, bonusRewards } = userWallet;
-  // let totalBalance = deposits + winnings + cashbackRewards + bonusRewards;
+const Header = ({ onSearchPress }) => {
+  const userWallet = useSelector((state) => state.profile.userWallet);
+  const userData = useSelector((state) => state.profile.userData);
+
+  const walletBalance =
+    (userWallet?.deposits || 0) +
+    (userWallet?.winnings || 0) +
+    (userWallet?.cashbackRewards || 0) +
+    (userWallet?.bonusRewards || 0);
+
   return (
-    <View style={styles.topContainer}>
-      <View
-        style={{
-          width: "50%",
-          justifyContent: "space-between",
-          flexDirection: "row",
-          alignItems: "center",
-        }}
-      >
+    <View style={styles.container}>
+      {/* Left Section */}
+      <View style={styles.leftSection}>
+        {/* Profile */}
         <TouchableOpacity
           onPress={() => NavigationService.navigate("Account")}
-          style={{ width: "25%" }}
         >
           <FastImage
             resizeMode="contain"
             source={
-              !userData?.profile_photo
-                ? userIcon
-                : { uri: IMAGE_BASE_URL + userData?.profile_photo }
+              userData?.profile_photo
+                ? { uri: IMAGE_BASE_URL + userData?.profile_photo }
+                : userIcon
             }
             style={styles.personImage}
           />
         </TouchableOpacity>
-        <View style={{ width: "25%" }}>
-          <FastImage
-            source={superstarLogo}
-            resizeMode="contain"
-            style={{ width: 40, height: 40 }}
-          />
-        </View>
+
+        {/* Logo */}
+        <FastImage
+          source={SuperStar}
+          resizeMode="contain"
+          style={styles.logo}
+        />
       </View>
 
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          width: "50%",
-          alignItems: "center",
-          gap: 10,
-        }}
-      >
+      {/* Right Section */}
+      <View style={styles.rightSection}>
+        {/* Wallet */}
         <TouchableOpacity onPress={() => NavigationService.navigate("Wallet")}>
           <LinearGradient
             colors={["#FFFFFF33", "#FFFFFF26"]}
             start={{ x: 1, y: 0 }}
             end={{ x: 0, y: 0 }}
-            style={[styles.walletView]}
+            style={styles.walletView}
           >
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <View style={styles.walletbox}>
+            <View style={styles.walletContent}>
+              <View style={styles.walletIconBox}>
                 <FastImage
-                  style={{ height: 15, width: 15 }}
+                  style={styles.walletIcon}
                   resizeMode="contain"
                   source={WalletIcon}
-                  tintColor={"#3EAA35"}
+                  tintColor="#3EAA35"
                 />
               </View>
-              <View>
-                <AppText
-                  style={{ marginLeft: 10 }}
-                  type={FORTEEN}
-                  weight={POPPINS_BOLD}
-                  color={BLACK}
-                >
-                  ₹{" "}
-                  {userWallet?.deposits +
-                    userWallet?.winnings +
-                    userWallet?.cashbackRewards +
-                    userWallet?.bonusRewards}
-                </AppText>
-              </View>
+              <AppText
+                style={styles.walletText}
+                type={FORTEEN}
+                weight={POPPINS_BOLD}
+                color={BLACK}
+              >
+                ₹ {walletBalance}
+              </AppText>
             </View>
           </LinearGradient>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.notifiView}>
+
+        {/* Search */}
+        <TouchableOpacity style={styles.notifiView} onPress={onSearchPress}>
+          <FastImage
+            source={searchIcon}
+            resizeMode="contain"
+            style={styles.notificationIcon}
+          />
+        </TouchableOpacity>
+
+        {/* Notifications */}
+        {/* <TouchableOpacity style={styles.notifiView}>
           <FastImage
             source={iconbell}
             resizeMode="contain"
             style={styles.notificationIcon}
           />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </View>
   );
@@ -126,69 +117,79 @@ const Header = () => {
 export default Header;
 
 const styles = StyleSheet.create({
-  topContainer: {
+  container: {
     height: 90,
     width: "100%",
-    paddingLeft: 20,
-    paddingRight: 10,
+    paddingHorizontal: 20,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+  },
+
+  // Left
+  leftSection: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "50%",
   },
   personImage: {
     height: 40,
     width: 40,
     borderRadius: 50,
   },
-  combineIcon: {
-    height: 35,
-    width: 73,
-    marginLeft: 85,
-    marginTop: "8%",
+  logo: {
+    width: 150,
+    height: 200,
+    // marginLeft: 20,
   },
-  notificationIcon: {
-    height: 28,
-    width: 28,
-    right: 25,
-  },
-  topBar: {
+
+  // Right
+  rightSection: {
     flexDirection: "row",
-    justifyContent: "space-evenly",
     alignItems: "center",
-    marginTop: 20,
+    gap: 12,
   },
   walletView: {
-    borderRadius: 59,
+    borderRadius: 50,
     flexDirection: "row",
-    marginTop: 2,
+    alignItems: "center",
+    paddingHorizontal: 10,
     height: 35,
     backgroundColor: "#C1AA9926",
-    borderWidth: 2,
+    borderWidth: 1.5,
     borderColor: "#C1AA9926",
-    marginLeft: 30,
-    width: 90,
   },
-  walletbox: {
+  walletContent: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  walletIconBox: {
     height: 28,
     width: 28,
     borderRadius: 50,
     alignItems: "center",
     justifyContent: "center",
-    flexDirection: "row",
-    borderWidth: 2,
+    borderWidth: 1.5,
     borderColor: "#9F9F9F",
     backgroundColor: "#FFFFFF80",
   },
-  belldot: {
-    height: 4,
-    width: 4,
-    backgroundColor: "#EC536A",
-    position: "absolute",
-    borderRadius: 10,
+  walletIcon: {
+    height: 15,
+    width: 15,
   },
+  walletText: {
+    marginLeft: 10,
+  },
+
+  // Notification
   notifiView: {
     height: 28,
-    with: 28,
-    // marginRight: -8,
+    width: 28,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  notificationIcon: {
+    height: 28,
+    width: 28,
   },
 });

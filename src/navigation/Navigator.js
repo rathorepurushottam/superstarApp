@@ -1,10 +1,9 @@
-import React from "react";
-import { Platform, View } from "react-native";
-import { NavigationContainer, useIsFocused } from "@react-navigation/native";
+import React, { useRef } from "react";
+import { Platform, View, Animated } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import {createDrawerNavigator} from '@react-navigation/drawer';
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import NavigationService from "./NavigationService";
+import FastImage from "react-native-fast-image";
+
 import {
   ADD_CASH_SCREEN,
   AUTH_LOADING_SCREEN,
@@ -17,17 +16,13 @@ import {
   LOGIN,
   MORE_MENU_SCREEN,
   PREVIEW_POST_SCREEN,
-  PROFILE_SCREEN,
   VIEW_POST_SCREEN,
   WITHDRAW_SCREEN,
 } from "./routes";
+
 import AuthLoading from "../screens/AuthLoading";
 import Login from "../screens/Login";
 import Home from "../screens/Home";
-import { colors } from "../theme/color";
-import { contestIcon, feedIcon, homeIcon, profileIcon, WalletIcon } from "../helper/images";
-import { AppText, GRY, POPPINS_SEMI_BOLD, RED, TEN } from "../common/AppText";
-import FastImage from "react-native-fast-image";
 import Feeds from "../screens/Feeds";
 import Wallet from "../screens/Wallet";
 import AddCash from "../screens/AddCash";
@@ -37,334 +32,163 @@ import Contest from "../screens/Contest";
 import CreatePost from "../screens/CreatePost";
 import Leaderboard from "../screens/Leaderboard";
 import EditProfile from "../screens/EditProfile";
-import CustomDrawer from "../screens/CustomDrawer";
 import MoreMenu from "../screens/MoreMenu";
 import PreviewPost from "../screens/PreviewPost";
 import ViewPost from "../screens/ViewPost";
 import Support from "../screens/Support";
 
+import { BottomTabBar } from "@react-navigation/bottom-tabs";
+
+import { colors } from "../theme/color";
+import {
+  contestIcon,
+  feedIcon,
+  homeIcon,
+  profileIcon,
+  WalletIcon,
+} from "../helper/images";
+import { AppText, GRY, POPPINS_SEMI_BOLD, RED, TEN } from "../common/AppText";
+import { navigationRef } from "./NavigationService";
+
+// ------------------ Navigators ------------------ //
 const Stack = createNativeStackNavigator();
-const Drawer = createDrawerNavigator();
+const BottomTab = createBottomTabNavigator();
 
-const Navigator = () => {
-  return (
-    <NavigationContainer
-      ref={(navigatorRef) => {
-        NavigationService.setTopLevelNavigator(navigatorRef);
-      }}
-    >
-      <RootStackScreen />
-    </NavigationContainer>
-  );
-};
+const defaultStackOptions = { headerShown: false };
 
-export default Navigator;
-
+// ------------------ Root Stack ------------------ //
 const RootStackScreen = () => (
-  <Stack.Navigator
-    screenOptions={{
-      headerShown: false,
-    }}
-  >
-    <Stack.Screen
-      name={AUTH_LOADING_SCREEN}
-      component={AuthLoading}
-      options={{ headerShown: false }}
-    />
-    <Stack.Screen
-      name={AUTHSTACK}
-      component={AuthStack}
-      options={{ headerShown: false }}
-    />
-    <Stack.Screen
-      name={BOTTOM_NAVIGATION_STACK}
-      component={BottomMainTab}
-      options={{ headerShown: false }}
-    />
-     <Stack.Screen
-      name={ADD_CASH_SCREEN}
-      component={AddCash}
-      options={{ headerShown: false }}
-    />
-    <Stack.Screen
-      name={WITHDRAW_SCREEN}
-      component={Withdraw}
-      options={{ headerShown: false }}
-    />
-     <Stack.Screen
-      name={CREATE_POST_SCREEEN}
-      component={CreatePost}
-      options={{ headerShown: false }}
-    />
-     <Stack.Screen
-      name={LEADERBOARD_SCREEN}
-      component={Leaderboard}
-      options={{ headerShown: false }}
-    />
-    <Stack.Screen
-      name={MORE_MENU_SCREEN}
-      component={MoreMenu}
-      options={{ headerShown: false }}
-    />
-    <Stack.Screen
-      name={EDIT_PROFILE_SCREEN}
-      component={EditProfile}
-      options={{ headerShown: false }}
-    />
-    <Stack.Screen
-      name={PREVIEW_POST_SCREEN}
-      component={PreviewPost}
-      options={{ headerShown: false }}
-    />
-    <Stack.Screen
-      name={VIEW_POST_SCREEN}
-      component={ViewPost}
-      options={{ headerShown: false }}
-    />
-    <Stack.Screen name={'Support_Screen'} component={Support} options={{ headerShown: false }}/>
-    
-    
+  <Stack.Navigator screenOptions={defaultStackOptions}>
+    <Stack.Screen name={AUTH_LOADING_SCREEN} component={AuthLoading} />
+    <Stack.Screen name={AUTHSTACK} component={AuthStack} />
+    <Stack.Screen name={BOTTOM_NAVIGATION_STACK} component={BottomMainTab} />
+    <Stack.Screen name={ADD_CASH_SCREEN} component={AddCash} />
+    <Stack.Screen name={WITHDRAW_SCREEN} component={Withdraw} />
+    <Stack.Screen name={CREATE_POST_SCREEEN} component={CreatePost} />
+    <Stack.Screen name={LEADERBOARD_SCREEN} component={Leaderboard} />
+    <Stack.Screen name={MORE_MENU_SCREEN} component={MoreMenu} />
+    <Stack.Screen name={EDIT_PROFILE_SCREEN} component={EditProfile} />
+    <Stack.Screen name={PREVIEW_POST_SCREEN} component={PreviewPost} />
+    <Stack.Screen name={VIEW_POST_SCREEN} component={ViewPost} />
+    <Stack.Screen name={"Support_Screen"} component={Support} />
   </Stack.Navigator>
 );
 
-const AuthStack = () => {
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Stack.Screen name={LOGIN} component={Login} />
-    </Stack.Navigator>
-  );
-};
-
-const HomeStack = () => (
-  <Stack.Navigator
-    screenOptions={{
-      headerShown: false,
-    }}
-  >
-    <Stack.Screen
-      name={HOME_SCREEN_MAIN}
-      component={Home}
-      options={{ headerShown: false }}
-    />
+// ------------------ Auth Stack ------------------ //
+const AuthStack = () => (
+  <Stack.Navigator screenOptions={defaultStackOptions}>
+    <Stack.Screen name={LOGIN} component={Login} />
   </Stack.Navigator>
 );
 
+// ------------------ Bottom Tabs with Animation ------------------ //
 const BottomMainTab = () => {
-  const BottomTab = createBottomTabNavigator();
+
   return (
     <BottomTab.Navigator
-      backBehavior="initialRoute"
-      // initialRouteName={HOME_SCREEN_MAIN}
+      // tabBar={(props) => <AnimatedTabBar {...props} tabOffset={tabOffset} />}
       screenOptions={{
         headerShown: false,
-        tabBarHideOnKeyboard: true,
         tabBarStyle: {
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
           backgroundColor: colors.white,
-          height: Platform.OS === "ios" ? 80 : 70,
-          width: "100%",
-          elevation: 0,
-          zIndex: 1,
+          height: 90, // badi tab
+          borderTopWidth: 0,
+          elevation: 5,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: -3 },
+          shadowOpacity: 0.1,
+          shadowRadius: 4,
+          paddingBottom: Platform.OS === "ios" ? 20 : 20,
         },
-        tabBarAllowFontScaling: false,
+        tabBarItemStyle: {
+          flexDirection: "column",
+          justifyContent: "center", // vertical center
+          alignItems: "center", // horizontal center
+        },
+        tabBarLabelStyle: {
+          marginBottom: 0,
+          fontSize: 12,
+        },
+        
         tabBarShowLabel: false,
       }}
     >
-      <BottomTab.Screen
-        name={"Home"}
-        component={HomeStack}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <View style={{ alignItems: "center", width: "100%" }}>
-              <FastImage
-                source={homeIcon}
-                tintColor={focused ? colors.lightRed : colors.gray}
-                style={{
-                  width: 25,
-                  height: 25,
-                  marginTop: 25,
-                }}
-                resizeMode="contain"
-              />
-              <AppText
-                style={{ marginTop: 4 }}
-                color={focused ? RED : GRY}
-                weight={POPPINS_SEMI_BOLD}
-                type={TEN}
-              >
-                Home
-              </AppText>
-            </View>
-          ),
-        }}
-      />
-      <BottomTab.Screen
-        name={"Contest"}
-        component={Contest}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <View style={{ alignItems: "center", width: "150%" }}>
-              <FastImage
-                source={contestIcon}
-                tintColor={focused ? colors.lightRed : colors.gray}
-                style={{
-                  width: 25,
-                  height: 25,
-                  marginTop: 25,
-                }}
-                resizeMode="contain"
-              />
-              <AppText
-                style={{ marginTop: 4 }}
-                color={focused ? RED : GRY}
-                weight={POPPINS_SEMI_BOLD}
-                type={TEN}
-              >
-                Contest
-              </AppText>
-            </View>
-          ),
-        }}
-      />
-
-      <BottomTab.Screen
-        name={"Wallet"}
-        component={Wallet}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <View style={{ alignItems: "center", width: "130%" }}>
-              <FastImage
-                tintColor={focused ? colors.lightRed : colors.gray}
-                source={WalletIcon}
-                style={{
-                  width: 25,
-                  height: 25,
-                  marginTop: 25,
-                }}
-                resizeMode="contain"
-              />
-              <AppText
-                style={{ marginTop: 3 }}
-                color={focused ? RED : GRY}
-                weight={POPPINS_SEMI_BOLD}
-                type={TEN}
-              >
-                Wallet
-              </AppText>
-            </View>
-          ),
-        }}
-      />
-
-      <BottomTab.Screen
-        name={"Feed"}
-        component={Feeds}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <View style={{ alignItems: "center", width: "100%" }}>
-              <FastImage
-                tintColor={focused ? colors.lightRed : colors.gray}
-                source={feedIcon}
-                style={{
-                  width: 25,
-                  height: 25,
-                  marginTop: 25,
-                }}
-                resizeMode="contain"
-              />
-              <AppText
-                style={{ marginTop: 4 }}
-                color={focused ? RED : GRY}
-                weight={POPPINS_SEMI_BOLD}
-                type={TEN}
-              >
-                Feed
-              </AppText>
-            </View>
-          ),
-        }}
-      />
-
-      <BottomTab.Screen
-        name={"Account"}
-        component={Profile}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <View style={{ alignItems: "center", width: "150%" }}>
-              <FastImage
-               tintColor={focused ? colors.lightRed : colors.gray}
-                source={profileIcon}
-                style={{
-                  width: 25,
-                  height: 25,
-                  marginTop: 25,
-                }}
-                resizeMode="contain"
-              />
-              <AppText
-                style={{ marginTop: 4 }}
-                color={focused ? RED : GRY}
-                weight={POPPINS_SEMI_BOLD}
-                type={TEN}
-              >
-                Account
-              </AppText>
-            </View>
-          ),
-        }}
-      />
+      {renderTab(
+        "Home",
+        (props) => (
+          <Home {...props} />
+        ),
+        homeIcon
+      )}
+      {renderTab(
+        "Contest",
+        (props) => (
+          <Contest {...props} />
+        ),
+        contestIcon
+      )}
+      {renderTab(
+        "Wallet",
+        (props) => (
+          <Wallet {...props}  />
+        ),
+        WalletIcon
+      )}
+      {renderTab(
+        "Reels",
+        (props) => (
+          <Feeds {...props}  />
+        ),
+        feedIcon
+      )}
+      {renderTab(
+        "Account",
+        (props) => (
+          <Profile {...props} />
+        ),
+        profileIcon
+      )}
     </BottomTab.Navigator>
   );
 };
 
-// const ProfileDrawer = ({navigation}) => {
-//   const isFocused = useIsFocused();
-//   return (
-//     <Drawer.Navigator
-//       drawerStyle={{width: '75%'}}
-//       drawerContent={props => (
-//         <CustomDrawer
-//           {...props}
-//           navigation={navigation}
-//           isFocused={isFocused}
-//         />
-//       )}
-//       screenOptions={{
-//         drawerActiveBackgroundColor: '#EBF4FF',
-//         drawerActiveTintColor: 'black',
-//         drawerInactiveBackgroundColor: 'blue',
-//         headerShown: false,
-//       }}
-//       drawerPosition={'left'}>
-//       <Drawer.Screen
-//         name="Profile"
-//         component={ProfileStack}
-//         options={{
-//           headerShown: false,
-//         }}
-//         drawerStyle={{borderWidth: 1}}
-//       />
-//     </Drawer.Navigator>
-//   );
-// };
+// ------------------ Helper for Tabs ------------------ //
+const renderTab = (name, Component, icon) => (
+  <BottomTab.Screen
+    key={name}
+    name={name}
+    children={Component}
+    options={{
+      tabBarIcon: ({ focused }) => (
+        <View
+          style={{
+            alignItems: "center",
+            justifyContent: "center",
+            minWidth: 60,
+          }}
+        >
+          <FastImage
+            source={icon}
+            tintColor={focused ? colors.lightRed : colors.gray}
+            style={{ width: 25, height: 25, marginTop: 20 }}
+            resizeMode="contain"
+          />
+          <AppText
+            style={{ marginTop: 4 }}
+            color={focused ? RED : GRY}
+            weight={POPPINS_SEMI_BOLD}
+            type={TEN}
+            numberOfLines={1}
+          >
+            {name}
+          </AppText>
+        </View>
+      ),
+    }}
+  />
+);
 
+// ------------------ App Container ------------------ //
+const Navigator = () => <RootStackScreen />;
 
-// const ProfileStack = () => (
-//   <Stack.Navigator
-//     screenOptions={{
-//       headerShown: false,
-//     }}>
-//     <Stack.Screen
-//       name={'Profile'}
-//       component={Profile}
-//       options={{headerShown: false}}
-//     />
-//   </Stack.Navigator>
-// );
+export default Navigator;

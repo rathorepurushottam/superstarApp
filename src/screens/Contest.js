@@ -27,7 +27,7 @@ import FastImage from "react-native-fast-image";
 import { colors } from "../theme/color";
 import LinearGradient from "react-native-linear-gradient";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import { danceIcon, firstPrizeIcon, user1Icon } from "../helper/images";
+import { calenderIcon, danceIcon, firstPrizeIcon, timeIcon, user1Icon } from "../helper/images";
 import { useEffect, useState } from "react";
 import NavigationService from "../navigation/NavigationService";
 import { CREATE_POST_SCREEEN, LEADERBOARD_SCREEN } from "../navigation/routes";
@@ -41,7 +41,7 @@ import {
 } from "../actions/profileAction";
 import TimerCountdown from "../common/TimerCountdown";
 import moment from "moment";
-import { BASE_URL, timeDifference } from "../helper/utility";
+import { BASE_URL, IMAGE_BASE_URL, timeDifference } from "../helper/utility";
 
 const renderItem = ({ item }) => {
   return (
@@ -78,13 +78,16 @@ const renderItem = ({ item }) => {
 
 const upcomingComponent = ({ item }) => {
   return (
-    <View
+    <TouchableOpacity
       style={{
         margin: 10,
         borderWidth: 1,
         borderColor: "#EDEDED",
         borderRadius: 10,
       }}
+      onPress={() =>
+        NavigationService.navigate(CREATE_POST_SCREEEN, { contest: item })
+      }
     >
       <LinearGradient
         colors={["#0DA33F", "#14B249"]}
@@ -107,9 +110,9 @@ const upcomingComponent = ({ item }) => {
             gap: 10,
           }}
         >
-          <Icon name="calendar-month" color={colors.white} size={25} />
+          <FastImage source={calenderIcon} style={{width: 15, height: 15}} resizeMode="contain" />
           <AppText type={ELEVEN} color={WHITE} weight={POPPINS_SEMI_BOLD}>
-            25/05/2025
+          {moment(item?.end_date).subtract(10, "days").calendar()}
           </AppText>
         </View>
         <View
@@ -119,9 +122,9 @@ const upcomingComponent = ({ item }) => {
             gap: 10,
           }}
         >
-          <Icon name="access-time" color={colors.white} size={25} />
+          <FastImage source={timeIcon} style={{width: 15, height: 15}} resizeMode="contain" />
           <AppText type={ELEVEN} color={WHITE} weight={POPPINS_SEMI_BOLD}>
-            12:00 PM - 02:00 PM
+          {timeDifference(new Date(item?.start_date))} - {timeDifference(new Date(item?.end_date))}
           </AppText>
         </View>
       </LinearGradient>
@@ -159,7 +162,7 @@ const upcomingComponent = ({ item }) => {
               />
             </View>
             <AppText color={BLACK} weight={POPPINS_SEMI_BOLD} type={SIXTEEN}>
-              Dancing
+            {item?.category?.categoryName}
             </AppText>
           </View>
           <View
@@ -173,7 +176,7 @@ const upcomingComponent = ({ item }) => {
             }}
           >
             <AppText color={BLACK} weight={POPPINS_BOLD} type={FORTEEN}>
-              ₹200
+            ₹{item?.joining_fee}
             </AppText>
           </View>
         </View>
@@ -185,9 +188,15 @@ const upcomingComponent = ({ item }) => {
             marginBottom: 8,
           }}
         >
-          <AppText style={{ color: "#D24430" }}>1000 Left</AppText>
-          <AppText color={BLACK}>2000 Spots</AppText>
+          <AppText style={{ color: "#D24430" }}>{item?.post_limit - item?.posts?.length} Left</AppText>
+          <AppText color={BLACK}>{item?.post_limit} Spots</AppText>
         </View>
+        <AppText
+          style={{ alignSelf: "center", marginBottom: 10, color: "#D9AF23" }}
+          type={FORTEEN}
+        >
+          {item?.contest_name}
+        </AppText>
         <View
           style={{
             height: 13,
@@ -241,7 +250,7 @@ const upcomingComponent = ({ item }) => {
               First Prize
             </AppText>
             <AppText color={BLACK} weight={POPPINS_SEMI_BOLD} type={TWENTY}>
-              ₹5,000
+              ₹{item?.first_prize}
             </AppText>
           </View>
         </View>
@@ -267,16 +276,17 @@ const upcomingComponent = ({ item }) => {
               Prize Pool
             </AppText>
             <AppText color={WHITE} weight={POPPINS_SEMI_BOLD} type={TWENTY}>
-              ₹20,000
+              ₹{item?.prize_pool}
             </AppText>
           </View>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
 const completedComponent = ({ item }) => {
+  console.log(`Completed Contest Item: `, item?.AppSafeAreaV);
   return (
     <TouchableOpacity
       style={{
@@ -285,7 +295,7 @@ const completedComponent = ({ item }) => {
         borderColor: "#EDEDED",
         borderRadius: 10,
       }}
-      onPress={() => NavigationService.navigate(LEADERBOARD_SCREEN)}
+      onPress={() => NavigationService.navigate(LEADERBOARD_SCREEN, {data: item})}
     >
       <LinearGradient
         colors={["#A30D0D", "#E95A5A"]}
@@ -308,7 +318,7 @@ const completedComponent = ({ item }) => {
             gap: 10,
           }}
         >
-          <Icon name="calendar-month" color={colors.white} size={25} />
+          <FastImage source={calenderIcon} style={{width: 15, height: 15}} resizeMode="contain" />
           <AppText type={ELEVEN} color={WHITE} weight={POPPINS_SEMI_BOLD}>
             {moment(item?.end_date).subtract(10, "days").calendar()}
           </AppText>
@@ -320,7 +330,7 @@ const completedComponent = ({ item }) => {
             gap: 10,
           }}
         >
-          <Icon name="access-time" color={colors.white} size={25} />
+          <FastImage source={timeIcon} style={{width: 15, height: 15}} resizeMode="contain" />
           <AppText type={ELEVEN} color={WHITE} weight={POPPINS_SEMI_BOLD}>
           {timeDifference(new Date(item?.start_date))} - {timeDifference(new Date(item?.end_date))}
           </AppText>
@@ -459,11 +469,12 @@ const completedComponent = ({ item }) => {
                 padding: 6,
                 borderRadius: 20,
                 width: "60%",
-                justifyContent: "space-between",
+                gap: 10
+                // justifyContent: "space-between",
               }}
             >
               <FastImage
-                source={user1Icon}
+                source={{uri: IMAGE_BASE_URL + item?.topUser?.profile_picture}}
                 resizeMode="contain"
                 style={{ width: 30, height: 30, borderRadius: 40 }}
               />
@@ -471,16 +482,16 @@ const completedComponent = ({ item }) => {
                 color={BLACK}
                 weight={POPPINS_SEMI_BOLD}
                 type={TWELVE}
-                style={{ marginRight: 10 }}
+                style={{ alignSelf: "center" }}
               >
-                Jiya Sharama
+                {item?.topUser?.username}
               </AppText>
             </View>
           </View>
 
           <View style={{ alignSelf: "center" }}>
             <AppText color={BLACK} weight={POPPINS_SEMI_BOLD} type={TWENTY}>
-              ₹5,000
+              ₹{item?.topUser?.winning_amount}
             </AppText>
           </View>
         </View>
@@ -546,7 +557,7 @@ const liveComponent = ({ item }) => {
             </AppText>
           </View>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
-            <Icon name="access-time" size={20} color={colors.black} />
+          <FastImage source={timeIcon} style={{width: 15, height: 15}} resizeMode="contain" />
             {/* <AppText style={{ color: "#DA5821" }}>01:00 left</AppText>
              */}
             <TimerCountdown />
@@ -580,8 +591,8 @@ const liveComponent = ({ item }) => {
             marginBottom: 8,
           }}
         >
-          <AppText style={{ color: "#D24430" }}>1000 Left</AppText>
-          <AppText color={BLACK}>2000 Spots</AppText>
+          <AppText style={{ color: "#D24430" }}>{item?.post_limit - item?.posts?.length} Left</AppText>
+          <AppText color={BLACK}>{item?.post_limit} Spots</AppText>
         </View>
         <View
           style={{
@@ -636,7 +647,7 @@ const liveComponent = ({ item }) => {
               First Prize
             </AppText>
             <AppText color={BLACK} weight={POPPINS_SEMI_BOLD} type={TWENTY}>
-              ₹5,000
+              ₹{item?.first_prize}
             </AppText>
           </View>
         </View>
@@ -662,7 +673,7 @@ const liveComponent = ({ item }) => {
               Prize Pool
             </AppText>
             <AppText color={WHITE} weight={POPPINS_SEMI_BOLD} type={TWENTY}>
-              ₹20,000
+              ₹{item?.prize_pool}
             </AppText>
           </View>
         </View>
@@ -870,7 +881,7 @@ const emptyComponent = () => {
         type={FIFTEEN}
         style={{ color: "#8E5A37" }}
       >
-        No Data Available
+        No Contest Available
       </AppText>
     </View>
   );
@@ -905,11 +916,11 @@ const Contest = () => {
 
   console.log(myContest, "contest");
   return (
-    <AppSafeAreaView>
+    <AppSafeAreaView style={{ backgroundColor: "#FEFEFE", flex: 1 }}>
       <KeyBoardAware>
         <View style={styles.mainView}>
           <Header />
-          <SearchInput />
+          {/* <SearchInput /> */}
           <View style={styles.contestView}>
             <TouchableOpacity
               style={{
@@ -981,7 +992,7 @@ const Contest = () => {
                 weight={POPPINS_SEMI_BOLD}
                 style={{ marginHorizontal: 20 }}
               >
-                Choose your category
+                 Categories
               </AppText>
               <View>
                 <FlatList
@@ -1021,7 +1032,7 @@ const Contest = () => {
                   type={TWENTY_FIVE}
                   weight={POPPINS_SEMI_BOLD}
                 >
-                  {myContest?.contests?.length}
+                  {myContest?.length}
                 </AppText>
                 <AppText style={{ color: "#666666" }} type={TWELVE}>
                   Total Contests Participated
@@ -1088,6 +1099,7 @@ const Contest = () => {
                   ? completedComponent
                   : ""
               }
+              keyExtractor={(item) => item._id}
               ListEmptyComponent={emptyComponent}
             />
           </View>

@@ -1,4 +1,4 @@
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { Alert, StyleSheet, TouchableOpacity, View } from "react-native";
 import { AppSafeAreaView } from "../common/AppSafeAreaView";
 import { KeyBoardAware } from "../common/KeyBoardAware";
 import {
@@ -31,7 +31,7 @@ const EditProfile = () => {
   const userData = useSelector((state) => {
     return state.profile.userData;
   });
-  const [selfie, setSelfie] = useState(userData?.profile_photo);
+  const [selfie, setSelfie] = useState("");
   const [name, setName] = useState(userData?.firstName);
   const [userName, setUserName] = useState(userData?.username);
   const [bio, setBio] = useState(userData?.bio);
@@ -39,10 +39,61 @@ const EditProfile = () => {
 
   const isLoading = useSelector((state) => state.auth.isLoading);
 
-  console.log(userData, "userData");
+  console.log(IMAGE_BASE_URL + userData.profile_photo, "userData");
+
+  const handleSelectImage = () => {
+    Alert.alert("Upload Photo", "Choose an option", [
+      { text: "Camera", onPress: () => onPressCamera() },
+      { text: "Gallery", onPress: () => onPressGallery() },
+      { text: "Cancel", style: "cancel" },
+    ]);
+  };
 
   const onPressCamera = () => {
     ImageCropPicker.openCamera({
+      useFrontCamera: true,
+      multiple: false,
+      mediaType: "photo",
+      cropping: true,
+      compressImageQuality: 0.6, // 1 = 100% quality
+    })
+      .then((image) => {
+        // Optional: console.log(image) to inspect structure if needed
+
+        // Validate image
+        const isValidSize = image?.size && image.size < 5 * 1024 * 1024; // 5MB
+        const isValidType = ["image/png", "image/jpeg", "image/jpg"].includes(
+          image?.mime
+        );
+
+        if (isValidSize && isValidType) {
+          const fileName =
+            image?.filename || image?.path?.split("/").pop() || "image.jpg";
+          const tempphoto = {
+            uri: image.path,
+            name: fileName,
+            type: image.mime,
+          };
+          setSelfie(tempphoto);
+        } else {
+          setSelfie("");
+          showError(
+            "Only JPEG, PNG & JPG formats and file size up to 5MB are supported."
+          );
+        }
+      })
+      .catch((error) => {
+        if (error?.code === "E_PICKER_CANCELLED") {
+          // user cancelled camera, no need to show error
+          return;
+        }
+        console.error("Camera error:", error);
+        showError("Failed to capture photo. Please try again.");
+      });
+  };
+
+  const onPressGallery = () => {
+    ImageCropPicker.openPicker({
       useFrontCamera: true,
       multiple: false,
       mediaType: "photo",
@@ -99,7 +150,7 @@ const EditProfile = () => {
   };
 
   return (
-    <AppSafeAreaView>
+    <AppSafeAreaView style={{ backgroundColor: "#FEFEFE", flex: 1 }}>
       <KeyBoardAware>
         <View style={styles.headerView}>
           <TouchableOpacity onPress={() => NavigationService.goBack()}>
@@ -128,7 +179,7 @@ const EditProfile = () => {
               overflow: "hidden",
               marginBottom: 15,
             }}
-            onPress={onPressCamera}
+            onPress={handleSelectImage}
           >
             <FastImage
               // source={
@@ -142,7 +193,7 @@ const EditProfile = () => {
                 selfie
                   ? selfie
                   : userData?.profile_photo
-                  ? { uri: IMAGE_BASE_URL  + userData?.profile_photo }
+                  ? { uri: IMAGE_BASE_URL + userData.profile_photo }
                   : editProfileIcon
               }
               resizeMode="contain"
@@ -156,6 +207,7 @@ const EditProfile = () => {
         <View
           style={{ width: "100%", borderWidth: 0.3, borderColor: "#3C3C434A" }}
         />
+
         <AppText
           color={BLACKOPACITY}
           type={FIFTEEN}
@@ -164,25 +216,18 @@ const EditProfile = () => {
         >
           Basic Information
         </AppText>
+
         <View style={{ margin: 20 }}>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              width: "90%",
-              alignItems: "center",
-            }}
-          >
+          {/* Name */}
+          <View style={{ marginBottom: 15 }}>
             <AppText
               color={BLACKOPACITY}
               type={THIRTEEN}
               weight={POPPINS_SEMI_BOLD}
+              style={{ marginBottom: 5 }}
             >
               Name
             </AppText>
-            {/* <AppText color={BLACKOPACITY} type={THIRTEEN}>
-              Jacob West
-            </AppText> */}
             <InputBox
               placeholder={"Name"}
               top
@@ -194,28 +239,20 @@ const EditProfile = () => {
                 backgroundColor: "#F5F5F5",
                 height: 45,
               }}
-              style={{
-                paddingHorizontal: universalPaddingHorizontal,
-                width: "90%",
-              }}
+              style={{ width: "100%" }}
               onChange={(value) => setName(value)}
               value={name}
               cursorColor={colors.black}
             />
           </View>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              width: "90%",
-              marginVertical: 20,
-              alignItems: "center",
-            }}
-          >
+
+          {/* Username */}
+          <View style={{ marginBottom: 15 }}>
             <AppText
               color={BLACKOPACITY}
               type={THIRTEEN}
               weight={POPPINS_SEMI_BOLD}
+              style={{ marginBottom: 5 }}
             >
               Username
             </AppText>
@@ -230,64 +267,20 @@ const EditProfile = () => {
                 backgroundColor: "#F5F5F5",
                 height: 45,
               }}
-              style={{
-                paddingHorizontal: universalPaddingHorizontal,
-                width: "90%",
-              }}
+              style={{ width: "100%" }}
               onChange={(value) => setUserName(value)}
               value={userName}
               cursorColor={colors.black}
             />
           </View>
-          {/* <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              width: "90%",
-              // marginVertical: 20,
-              alignItems :"center"
-            }}
-          >
+
+          {/* Bio */}
+          <View style={{ marginBottom: 15 }}>
             <AppText
               color={BLACKOPACITY}
               type={THIRTEEN}
               weight={POPPINS_SEMI_BOLD}
-            >
-              Website
-            </AppText>
-            <InputBox
-              placeholder={"Website"}
-              top
-              placeholderTextColor={"#00000066"}
-              textInputStyle={{
-                borderWidth: 1,
-                borderColor: "#E4E4E4",
-                borderRadius: 12,
-                backgroundColor: "#F5F5F5",
-                height: 45,
-              }}
-              style={{
-                paddingHorizontal: universalPaddingHorizontal,
-                width: "90%",
-              }}
-              onChange={(value) => setUserName(value)}
-              value={userName}
-              cursorColor={colors.black}
-            />
-          </View> */}
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              // width: "90%",
-              // marginVertical: 20,
-              alignItems: "center",
-            }}
-          >
-            <AppText
-              color={BLACKOPACITY}
-              type={THIRTEEN}
-              weight={POPPINS_SEMI_BOLD}
+              style={{ marginBottom: 5 }}
             >
               Bio
             </AppText>
@@ -302,16 +295,15 @@ const EditProfile = () => {
                 backgroundColor: "#F5F5F5",
                 height: 45,
               }}
-              style={{
-                paddingHorizontal: universalPaddingHorizontal,
-                width: "90%",
-              }}
+              style={{ width: "100%" }}
               onChange={(value) => setBio(value)}
               value={bio}
               cursorColor={colors.black}
             />
           </View>
         </View>
+
+        {/* Private Information */}
         <AppText
           color={BLACKOPACITY}
           type={FIFTEEN}
@@ -320,20 +312,15 @@ const EditProfile = () => {
         >
           Private Information
         </AppText>
+
         <View style={{ margin: 20 }}>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              // width: "90%",
-              // marginVertical: 20,
-              alignItems: "center",
-            }}
-          >
+          {/* Email */}
+          <View style={{ marginBottom: 15 }}>
             <AppText
               color={BLACKOPACITY}
               type={THIRTEEN}
               weight={POPPINS_SEMI_BOLD}
+              style={{ marginBottom: 5 }}
             >
               Email
             </AppText>
@@ -348,44 +335,12 @@ const EditProfile = () => {
                 backgroundColor: "#F5F5F5",
                 height: 45,
               }}
-              style={{
-                paddingHorizontal: universalPaddingHorizontal,
-                width: "90%",
-              }}
+              style={{ width: "100%" }}
               onChange={(value) => setEmail(value)}
               value={email}
               cursorColor={colors.black}
             />
           </View>
-          {/* <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              width: "50%",
-              marginVertical: 20,
-            }}
-          >
-            <AppText color={BLACKOPACITY} type={THIRTEEN}>
-              Phone
-            </AppText>
-            <AppText color={BLACKOPACITY} type={THIRTEEN}>
-              +1 202 555 0147
-            </AppText>
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              width: "50%",
-            }}
-          >
-            <AppText color={BLACKOPACITY} type={THIRTEEN}>
-              Gender
-            </AppText>
-            <AppText color={BLACKOPACITY} type={THIRTEEN}>
-              Male
-            </AppText>
-          </View> */}
         </View>
 
         <PrimaryButton

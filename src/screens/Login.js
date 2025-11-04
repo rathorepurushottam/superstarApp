@@ -101,7 +101,7 @@ const Login = () => {
           
         } 
         if (!isPromonSelected) {
-          toastAlert.showToastError("Please click on Promtional SMS.");
+          toastAlert.showToastError("Please click on will not upload inappropriate videos.");
           return;
         } 
         else {
@@ -296,7 +296,7 @@ const Login = () => {
                 color={TEXTGREY}
                 style={{ marginHorizontal: 10, lineHeight: 20 }}
               >
-                Agree to receiving promotional & marketing emails/ SMS.
+                I understand and agree not to upload inappropriate videos on this platform.
               </AppText>
             </TouchableOpacity>
           </View>
@@ -422,7 +422,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   mainView: {
-    marginTop: 60,
+    marginTop: 20,
     flex: 1,
     backgroundColor: colors.darkBlue,
     borderTopLeftRadius: 50,

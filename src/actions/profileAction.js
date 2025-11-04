@@ -47,6 +47,7 @@ import {
   setLeaderBoardTransactions,
   setBanStates,
   setMyContest,
+  setContestLeaderBoard,
 } from "../slices/profileSlice";
 import {
   AUTHSTACK,
@@ -68,15 +69,11 @@ export const getUserProfile =
       const response = await appOperation.customer.get_profile();
       // console.log(response, "getUserProfile");
       if (response?.status) {
-        //   isNavigate ? NavigationService.reset(BOTTOM_NAVIGATION_STACK) : null;
-        //   isUpdate ? NavigationService.navigate(BOTTOM_TAB_PROFILE_SCREEN) : null;
-        // NavigationService.reset(BOTTOM_NAVIGATION_STACK);
+
         isNavigate ? null : NavigationService.reset(BOTTOM_NAVIGATION_STACK);
         dispatch(setUserData(response?.data?.user));
-        // dispatch(updateDeviceToken());
       } else {
         NavigationService.reset(AUTHSTACK);
-        // toastAlert.showToastError(response?.message);
       }
     } catch (e) {
       logError(e);
@@ -156,6 +153,28 @@ export const getUserProfile =
     }
   };
 
+  export const deletePost = (postId) => async (dispatch) => {
+    try {
+      dispatch(setLoading(true));
+      console.log("Deleting post with ID:", postId);
+      const res = await appOperation.customer.delete_post(postId);
+      console.log("Delete response:", res);
+      if (res?.status) {
+        toastAlert.showToastError(res?.message || "Post deleted successfully");
+        // Refresh posts after deletion
+        dispatch(getPosts());
+      } else {
+        toastAlert.showToastError(res?.message || "Failed to delete post");
+      }
+    } catch (e) {
+      dispatch(setLoading(false));
+      console.log("error in deletePost", e);
+      toastAlert.showToastError(e?.message || "Failed to delete post");
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
   export const getUserWallet = () => async (dispatch) => {
     try {
       dispatch(setLoading(true));
@@ -190,7 +209,7 @@ export const getUserProfile =
     try {
       dispatch(setLoading(true));
       const res = await appOperation.customer.get_my_contest();
-      console.log(res, "getMyContest");
+      // console.log(res, "getMyContest");
       if (res?.status) {
         dispatch(setMyContest(res?.data?.contests));
       }
@@ -205,7 +224,7 @@ export const getUserProfile =
     try {
       dispatch(setLoading(true));
       const res = await appOperation.customer.get_live_contest();
-      console.log(res, "getLiveContest");
+      // console.log(res, "getLiveContest");
       if (res?.status) {
         dispatch(setMyContest(res?.data));
       }
@@ -220,7 +239,7 @@ export const getUserProfile =
     try {
       dispatch(setLoading(true));
       const res = await appOperation.customer.get_upcoming_contest();
-      console.log(res, "getUpcomingContest");
+      // console.log(res, "getUpcomingContest");
       if (res?.status) {
         dispatch(setMyContest(res?.data));
       }
@@ -235,7 +254,7 @@ export const getUserProfile =
     try {
       dispatch(setLoading(true));
       const res = await appOperation.customer.get_completed_contest();
-      console.log(res, "getCompletedContest");
+      // console.log(res, "getCompletedContest");
       if (res?.status) {
         dispatch(setMyContest(res?.data));
       }
@@ -246,11 +265,78 @@ export const getUserProfile =
     }
   };
 
+  export const getContestLeaderBoard = (id) => async (dispatch) => {
+    try {
+      dispatch(setLoading(true));
+      const res = await appOperation.customer.get_contest_leader(id);
+      console.log(res, "getContestLeaderBoard");
+      if (res?.status) {
+        dispatch(setContestLeaderBoard(res?.data));
+      }
+    } catch (e) {
+      console.log("error in getContestLeaderBoard", e);
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
   export const toggleLike = (id) => async (dispatch) => {
     try {
       dispatch(setLoading(true));
       const res = await appOperation.customer.post_toggle_likes(id);
-      // console.log(res, "response");
+      console.log(res, "response");
+      dispatch(setLoading(false));
+      if (res.code !== 200) {
+        toastAlert.showToastError(res.message);
+      } else {
+        dispatch(getHomePosts());
+      }
+    } catch (e) {
+      dispatch(setLoading(false));
+      console.log("error in toggleLike", e);
+    }
+  };
+
+
+  export const followUser = (id) => async (dispatch) => {
+    try {
+      dispatch(setLoading(true));
+      const res = await appOperation.customer.follow_user(id);
+      console.log(res, "response");
+      dispatch(setLoading(false));
+      if (res.code !== 200) {
+        toastAlert.showToastError(res.message);
+      } else {
+        dispatch(getHomePosts());
+      }
+    } catch (e) {
+      dispatch(setLoading(false));
+      console.log("error in followUser", e);
+    }
+  };
+
+  export const unFollowUser = (id) => async (dispatch) => {
+    try {
+      dispatch(setLoading(true));
+      const res = await appOperation.customer.un_follow_user(id);
+      console.log(res, "response");
+      dispatch(setLoading(false));
+      if (res.code !== 200) {
+        toastAlert.showToastError(res.message);
+      } else {
+        dispatch(getHomePosts());
+      }
+    } catch (e) {
+      dispatch(setLoading(false));
+      console.log("error in toggleLike", e);
+    }
+  };
+
+  export const toggleVote = (id) => async (dispatch) => {
+    try {
+      dispatch(setLoading(true));
+      const res = await appOperation.customer.post_vode_likes(id);
+      console.log(res, "toggleVote");
       dispatch(setLoading(false));
       if (res.code !== 200) {
         toastAlert.showToastError(res.message);

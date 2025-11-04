@@ -41,7 +41,7 @@ const Support = () => {
   };
 
   return (
-    <AppSafeAreaView>
+    <AppSafeAreaView style={{ backgroundColor: "#FEFEFE", flex: 1 }}>
         <View style={styles.headerView}>
         <TouchableOpacity onPress={() => NavigationService.goBack()}>
           <FastImage
@@ -61,6 +61,7 @@ const Support = () => {
       <Text style={styles.label}>Subject</Text>
       <TextInput
         style={styles.input}
+        placeholderTextColor={'#000'}
         placeholder="Enter subject"
         value={subject}
         onChangeText={setSubject}
@@ -70,6 +71,7 @@ const Support = () => {
       <TextInput
         style={[styles.input, styles.textarea]}
         placeholder="Enter message"
+        placeholderTextColor={'#000'}
         value={message}
         onChangeText={setMessage}
         multiline
@@ -77,7 +79,7 @@ const Support = () => {
       />
 
       {/* <Button title="Submit" onPress={handleSubmit} /> */}
-      <PrimaryButton title={'Submit'} onPress={handleSubmit}/>
+      <PrimaryButton title={'Submit'} onPress={handleSubmit} disabled={!message || !subject}/>
     </View>
     <SpinnerSecond loading={isLoading}/>
     </AppSafeAreaView>
@@ -92,6 +94,7 @@ const styles = StyleSheet.create({
   label: {
     marginBottom: 6,
     fontWeight: '600',
+    color: "#000"
   },
   input: {
     borderWidth: 1,
@@ -100,6 +103,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 16,
     backgroundColor: '#fff',
+    color: "#000"
   },
   textarea: {
     height: 100,

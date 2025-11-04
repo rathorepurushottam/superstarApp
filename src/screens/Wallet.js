@@ -23,6 +23,8 @@ import NavigationService from "../navigation/NavigationService";
 import { ADD_CASH_SCREEN, WITHDRAW_SCREEN } from "../navigation/routes";
 import { useDispatch, useSelector } from "react-redux";
 import { getCategories, getUserWallet } from "../actions/profileAction";
+import FastImage from "react-native-fast-image";
+import { ArrowDownIcon, CaretLeftIcon, plusIcon } from "../helper/images";
 
 
 const Wallet = () => {
@@ -38,14 +40,14 @@ const Wallet = () => {
 
   console.log(userWallet, "userWallet");
   return (
-    <AppSafeAreaView>
+    <AppSafeAreaView style={{ backgroundColor: "#FEFEFE", flex: 1 }}>
       <KeyBoardAware>
         <View style={styles.mainView}>
           <AppText
             color={BLACK}
             type={EIGHTEEN}
             weight={POPPINS_SEMI_BOLD}
-            style={{ margin: 15 }}
+            style={{ margin: 15, marginTop: 40 }}
           >
             Wallet
           </AppText>
@@ -76,7 +78,8 @@ const Wallet = () => {
                 style={[styles.addButton, { backgroundColor: "#3DB767" }]}
                 onPress={() => NavigationService.navigate(ADD_CASH_SCREEN)}
               >
-                <Icon name="add" color={colors.white} size={15} />
+                {/* <Icon name="add" color={colors.white} size={15} /> */}
+                <FastImage source={plusIcon} style={{width: 12, height: 12}} resizeMode="contain" tintColor={colors.white}/>
                 <AppText color={WHITE} type={TWELVE} style={{ marginLeft: 5 }}>
                   Add Cash
                 </AppText>
@@ -95,7 +98,8 @@ const Wallet = () => {
                 style={[styles.addButton, { backgroundColor: "#F29024" }]}
                 onPress={() => NavigationService.navigate(WITHDRAW_SCREEN)}
               >
-                <Icon name="arrow-down" color={colors.white} size={15} />
+                {/* <Icon name="arrow-down" color={colors.white} size={15} /> */}
+                <FastImage source={ArrowDownIcon} style={{width: 12, height: 12}} resizeMode="contain" />
                 <AppText color={WHITE} type={TWELVE} style={{ marginLeft: 5 }}>
                   Withdraw
                 </AppText>
@@ -124,7 +128,8 @@ const Wallet = () => {
                   >
                     Cashback Details
                   </AppText>
-                  <Icon name="chevron-forward" color={colors.gray} size={15} />
+                  {/* <FastImage source={CaretLeftIcon} style={{width: 12, height: 12}} resizeMode="contain" /> */}
+                  <FastImage source={CaretLeftIcon} style={{width: 12, height: 12}} resizeMode="contain" />
                 </View>
               </View>
             </View>
@@ -151,7 +156,7 @@ const Wallet = () => {
                   >
                     Bonus Details
                   </AppText>
-                  <Icon name="chevron-forward" color={colors.gray} size={15} />
+                  <FastImage source={CaretLeftIcon} style={{width: 12, height: 12}} resizeMode="contain" />
                 </View>
               </View>
             </View>
@@ -160,7 +165,7 @@ const Wallet = () => {
             <AppText color={BLACK} type={FORTEEN}>
               Transaction History
             </AppText>
-            <Icon name="chevron-forward" color={colors.black} size={15} />
+            <FastImage source={CaretLeftIcon} style={{width: 12, height: 12}} resizeMode="contain" />
           </TouchableOpacity>
         </View>
       </KeyBoardAware>

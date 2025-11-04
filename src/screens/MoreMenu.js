@@ -19,15 +19,19 @@ import {
   nameTagIcon,
   savedIcon,
   settingIcon,
+  supportIcon,
 } from "../helper/images";
 import FastImage from "react-native-fast-image";
 import { useDispatch } from "react-redux";
 import { userLogout } from "../actions/authActions";
+import LogoutModal from "../common/LogoutModal";
+import { useState } from "react";
 
 const MoreMenu = () => {
   const dispatch = useDispatch();
+  const [showModal, setShowModal] = useState(false);
   return (
-    <AppSafeAreaView>
+    <AppSafeAreaView style={{ backgroundColor: "#FEFEFE", flex: 1 }}>
       <View style={styles.headerView}>
         <TouchableOpacity onPress={() => NavigationService.goBack()}>
           <FastImage
@@ -40,7 +44,7 @@ const MoreMenu = () => {
           />
         </TouchableOpacity>
         <AppText type={TWENTY} weight={POPPINS_SEMI_BOLD}>
-          Settings and Activity
+          Settings
         </AppText>
       </View>
       <View
@@ -57,21 +61,21 @@ const MoreMenu = () => {
             onPress={() => NavigationService.navigate('Support_Screen')}
           >
             <FastImage
-              source={archiveIcon}
+              source={supportIcon}
               resizeMode="contain"
               style={{ width: 23, height: 23 }}
             />
             <AppText type={FIFTEEN}>Support</AppText>
           </TouchableOpacity>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
+          {/* <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
             <FastImage
               source={activityIcon}
               resizeMode="contain"
               style={{ width: 23, height: 23 }}
             />
             <AppText type={FIFTEEN}>Your Activity</AppText>
-          </View>
-          <View
+          </View> */}
+          {/* <View
             style={{
               flexDirection: "row",
               alignItems: "center",
@@ -85,16 +89,16 @@ const MoreMenu = () => {
               style={{ width: 23, height: 23 }}
             />
             <AppText type={FIFTEEN}>Nametag</AppText>
-          </View>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
+          </View> */}
+          {/* <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
             <FastImage
               source={savedIcon}
               resizeMode="contain"
               style={{ width: 23, height: 23 }}
             />
             <AppText type={FIFTEEN}>Saved</AppText>
-          </View>
-          <View
+          </View> */}
+          {/* <View
             style={{
               flexDirection: "row",
               alignItems: "center",
@@ -108,21 +112,21 @@ const MoreMenu = () => {
               style={{ width: 23, height: 23 }}
             />
             <AppText type={FIFTEEN}>Close Friends</AppText>
-          </View>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
+          </View> */}
+          {/* <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
             <FastImage
               source={discoverPplIcon}
               resizeMode="contain"
               style={{ width: 23, height: 23 }}
             />
             <AppText type={FIFTEEN}>Discover People</AppText>
-          </View>
+          </View> */}
           <TouchableOpacity
             style={{
               flexDirection: "row",
               alignItems: "center",
               gap: 20,
-              marginVertical: 20,
+              marginVertical: 10,
             }}
             onPress={() => dispatch(userLogout())}
           >
@@ -135,7 +139,7 @@ const MoreMenu = () => {
           </TouchableOpacity>
         </View>
         {/* logout */}
-        <View
+        {/* <View
           style={{
             flexDirection: "row",
             alignItems: "center",
@@ -149,8 +153,12 @@ const MoreMenu = () => {
             style={{ width: 23, height: 23 }}
           />
           <AppText type={FIFTEEN}>Settings</AppText>
-        </View>
+        </View> */}
       </View>
+      <LogoutModal
+        visible={showModal}
+        onClose={() => setShowModal(false)}
+      />
     </AppSafeAreaView>
   );
 };
@@ -164,6 +172,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginHorizontal: 20,
     marginTop: 20,
-    width: "70%",
+    width: "55%",
   },
 });
